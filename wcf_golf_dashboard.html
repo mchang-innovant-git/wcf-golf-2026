@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WCF Golf Tournament 2026 — Project Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; font-size: 13px; }
+
+/* HEADER */
+.header { background: linear-gradient(135deg, #1a4731 0%, #276749 100%); color: white; padding: 18px 24px 16px; }
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.event-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+.event-subtitle { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.countdown-box { text-align: right; }
+.countdown-days { font-size: 32px; font-weight: 800; line-height: 1; }
+.countdown-label { font-size: 10px; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px; }
+.header-meta { display: flex; gap: 20px; margin-top: 10px; font-size: 11px; opacity: 0.85; }
+.header-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* TABS */
+.tab-bar { background: white; border-bottom: 1px solid #e2e8f0; display: flex; padding: 0 24px; position: sticky; top: 0; z-index: 10; }
+.tab { padding: 10px 14px; font-size: 12px; font-weight: 500; color: #718096; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tab.active { color: #276749; border-bottom-color: #276749; font-weight: 600; }
+.tab:hover:not(.active) { color: #2d3748; }
+
+/* MAIN */
+.main { padding: 16px 24px 32px; max-width: 1100px; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* METRIC CARDS */
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.metric-card { background: white; border-radius: 8px; padding: 14px 16px; border-left: 3px solid #276749; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.metric-val { font-size: 22px; font-weight: 700; color: #1a202c; line-height: 1.1; }
+.metric-label { font-size: 11px; color: #718096; margin-top: 3px; }
+.metric-card.red { border-left-color: #e53e3e; }
+.metric-card.yellow { border-left-color: #d69e2e; }
+.metric-card.blue { border-left-color: #3182ce; }
+
+/* STATUS BADGES */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge-paid { background: #c6f6d5; color: #22543d; }
+.badge-confirmed { background: #fefcbf; color: #744210; }
+.badge-contacted { background: #fed7aa; color: #7b341e; }
+.badge-open { background: #fed7d7; color: #742a2a; }
+.badge-notstarted { background: #e2e8f0; color: #4a5568; }
+.badge-risk { background: #fed7d7; color: #742a2a; }
+.badge-done { background: #c6f6d5; color: #22543d; }
+.badge-inprog { background: #bee3f8; color: #2a4365; }
+
+/* SECTION HEADERS */
+.section-header { font-size: 13px; font-weight: 700; color: #2d3748; margin: 18px 0 10px; display: flex; align-items: center; gap: 6px; }
+.section-header::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+
+/* SPONSOR TABLE */
+.sp-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.sp-table th { background: #2d3748; color: white; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+.sp-table td { padding: 10px 12px; border-bottom: 1px solid #f0f4f8; vertical-align: top; }
+.sp-table tr:last-child td { border-bottom: none; }
+.sp-table tr:hover td { background: #f7fafc; }
+.sp-table .tier-name { font-weight: 600; color: #1a202c; }
+.sp-table .tier-price { font-size: 11px; color: #718096; }
+.sp-table .sponsor-name { font-weight: 500; }
+.sp-table .sponsor-company { font-size: 11px; color: #718096; }
+.sp-table .notes-text { font-size: 11px; color: #4a5568; line-height: 1.4; }
+.flag { display: inline-block; font-size: 10px; background: #fed7d7; color: #742a2a; padding: 1px 5px; border-radius: 3px; font-weight: 600; margin-left: 4px; }
+
+/* WORKSTREAM GRID */
+.ws-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.ws-card { background: white; border-radius: 8px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.ws-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.ws-name { font-weight: 600; font-size: 12px; }
+.ws-pct { font-size: 11px; color: #718096; }
+.progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.fill-green { background: #48bb78; }
+.fill-yellow { background: #ecc94b; }
+.fill-orange { background: #ed8936; }
+.fill-red { background: #fc8181; }
+.ws-items { margin-top: 10px; }
+.ws-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-top: 1px solid #f0f4f8; font-size: 11px; }
+.ws-item-name { color: #4a5568; }
+.ws-item-owner { color: #a0aec0; font-size: 10px; }
+
+/* ACTION ITEMS */
+.action-list { display: flex; flex-direction: column; gap: 8px; }
+.action-item { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; gap: 10px; align-items: flex-start; }
+.action-priority { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 1px; }
+.p-red { background: #e53e3e; }
+.p-orange { background: #dd6b20; }
+.p-yellow { background: #d69e2e; color: #1a202c; }
+.action-content { flex: 1; }
+.action-title { font-weight: 600; font-size: 12px; color: #1a202c; }
+.action-detail { font-size: 11px; color: #718096; margin-top: 2px; line-height: 1.4; }
+.action-meta { display: flex; gap: 8px; margin-top: 4px; }
+.action-owner { font-size: 10px; background: #edf2f7; color: #4a5568; padding: 1px 6px; border-radius: 3px; font-weight: 500; }
+.action-due { font-size: 10px; color: #e53e3e; font-weight: 500; }
+
+/* FINANCIALS */
+.fin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.chart-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.chart-title { font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 12px; }
+.fin-breakdown { display: flex; flex-direction: column; gap: 8px; }
+.fin-line { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 6px; }
+.fin-line.paid { background: #f0fff4; }
+.fin-line.confirmed { background: #fffff0; }
+.fin-line.contacted { background: #fffaf0; }
+.fin-line.potential { background: #ebf8ff; }
+.fin-line.total { background: #2d3748; color: white; font-weight: 700; border-radius: 6px; }
+.fin-line-label { font-size: 12px; font-weight: 500; }
+.fin-line-amount { font-size: 14px; font-weight: 700; }
+
+/* MARKETING */
+.mkt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mkt-card { background: white; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.mkt-icon { font-size: 20px; margin-bottom: 6px; }
+.mkt-name { font-weight: 600; font-size: 12px; margin-bottom: 4px; }
+.mkt-pct { font-size: 11px; color: #718096; margin-bottom: 6px; }
+.mkt-note { font-size: 10px; color: #4a5568; line-height: 1.4; }
+
+/* COMMITTEES */
+.comm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.comm-card { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.comm-name { font-weight: 600; font-size: 12px; margin-bottom: 4px; }
+.comm-lead { font-size: 11px; color: #4a5568; }
+.comm-lead.no-lead { color: #e53e3e; font-weight: 600; }
+
+/* SHAREPOINT NOTE */
+.sp-note { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 11px; color: #2a4365; line-height: 1.5; }
+.sp-note strong { display: block; font-size: 12px; margin-bottom: 4px; }
+
+/* SEND PROMPT BUTTONS */
+.drill-btn { display: inline-block; margin-top: 8px; padding: 5px 10px; background: #276749; color: white; border: none; border-radius: 5px; font-size: 10px; font-weight: 600; cursor: pointer; }
+.drill-btn:hover { background: #1a4731; }
+
+/* RISK BANNER */
+.risk-banner { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; font-size: 11px; color: #742a2a; }
+.risk-icon { font-size: 18px; flex-shrink: 0; }
+
+/* TIMELINE */
+.timeline-bar { position: relative; background: #e2e8f0; border-radius: 4px; height: 8px; margin: 4px 0 2px; }
+.timeline-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="event-title">⛳ WCF Charity Golf Tournament 2026</div>
+      <div class="event-subtitle">Royal Woodbine Golf Club · September 22, 2026 · 10AM–8PM</div>
+    </div>
+    <div class="countdown-box">
+      <div class="countdown-days" id="daysLeft">—</div>
+      <div class="countdown-label">days to event</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <span>🏌️ 144 Golfers</span>
+    <span>🍽️ 50+ Dinner Guests</span>
+    <span>💚 Wellspring Cultural Foundation</span>
+    <span>📋 Ernescliff College Redevelopment</span>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('overview')">Overview</div>
+  <div class="tab" onclick="showTab('sponsorship')">Sponsorship</div>
+  <div class="tab" onclick="showTab('marketing')">Marketing</div>
+  <div class="tab" onclick="showTab('workstreams')">Workstreams</div>
+  <div class="tab" onclick="showTab('actions')">Priority Actions</div>
+</div>
+
+<div class="main">
+
+<!-- ===================== OVERVIEW PANEL ===================== -->
+<div class="panel active" id="panel-overview">
+
+  <div class="risk-banner">
+    <div class="risk-icon">🚨</div>
+    <div><strong>Critical Risk:</strong> Auction committee has <strong>no lead assigned</strong>. This workstream is at 0% with no owner. Assign a lead immediately.</div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-val">$25,000</div>
+      <div class="metric-label">💚 Sponsorship Paid</div>
+    </div>
+    <div class="metric-card yellow">
+      <div class="metric-val">$16,200</div>
+      <div class="metric-label">🟡 Confirmed (unpaid)</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-val">$44,200</div>
+      <div class="metric-label">📊 Total Pipeline</div>
+    </div>
+    <div class="metric-card red">
+      <div class="metric-val">~$32K+</div>
+      <div class="metric-label">🔴 Uncaptured Potential</div>
+    </div>
+  </div>
+
+  <div class="section-header">Overall Project Health</div>
+  <div class="ws-grid">
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">Governance & Finance</div><div class="ws-pct">~85%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-green" style="width:85%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Budget & legal</span><span><span class="badge badge-done">Done</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Committees formed</span><span><span class="badge badge-inprog">50%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Payment page setup</span><span><span class="badge badge-open">Blocked</span></span></div>
+      </div>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">Sponsorships & Revenue</div><div class="ws-pct">~60%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:60%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Title sponsor</span><span><span class="badge badge-paid">Paid</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Hole sponsors (~9 open)</span><span><span class="badge badge-inprog">50%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Cart sponsors (72 avail.)</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">Marketing & Comms</div><div class="ws-pct">~45%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:45%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Website</span><span><span class="badge badge-done">100%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Email marketing</span><span><span class="badge badge-inprog">75%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Social media</span><span><span class="badge badge-inprog">25%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Photography/video</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">Player Registration</div><div class="ws-pct">~20%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-orange" style="width:20%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Registration portal</span><span><span class="badge badge-done">Done</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Player outreach</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Payment flow</span><span><span class="badge badge-open">Blocked</span></span></div>
+      </div>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">Golf Course & F&B</div><div class="ws-pct">~15%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:15%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Course coordination</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Catering (The Vue)</span><span><span class="badge badge-inprog">25%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">On-course contests</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">Swag, Prizes & Volunteers</div><div class="ws-pct">~5%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:5%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Swag & prizes</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Volunteer recruitment</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Auction <span class="flag">NO LEAD</span></span><span><span class="badge badge-open">At Risk</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Committees</div>
+  <div class="comm-grid">
+    <div class="comm-card"><div class="comm-name">Planning & Marketing</div><div class="comm-lead">Louis Williams</div></div>
+    <div class="comm-card"><div class="comm-name">Sponsorship</div><div class="comm-lead">Gerson D'Souza · 416.473.2385</div></div>
+    <div class="comm-card"><div class="comm-name">Purchasing</div><div class="comm-lead">Gerard Garcisto</div></div>
+    <div class="comm-card" style="border: 1px solid #feb2b2;"><div class="comm-name">Auction 🚨</div><div class="comm-lead no-lead">NO LEAD ASSIGNED</div></div>
+    <div class="comm-card"><div class="comm-name">Programming</div><div class="comm-lead">Cherry</div></div>
+    <div class="comm-card"><div class="comm-name">Contact for Sponsorships</div><div class="comm-lead">wcfgolf@gmail.com</div></div>
+  </div>
+</div>
+
+<!-- ===================== SPONSORSHIP PANEL ===================== -->
+<div class="panel" id="panel-sponsorship">
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-val">$25,000</div>
+      <div class="metric-label">💚 Paid · Komandor/Omni Surfaces</div>
+    </div>
+    <div class="metric-card yellow">
+      <div class="metric-val">$16,200</div>
+      <div class="metric-label">🟡 Confirmed, payment pending</div>
+    </div>
+    <div class="metric-card" style="border-left-color:#dd6b20">
+      <div class="metric-val">$3,000</div>
+      <div class="metric-label">🟠 Contacted · 3 unnamed vendors</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-val">~$32K+</div>
+      <div class="metric-label">🔵 Uncaptured (Dinner + Carts + Holes)</div>
+    </div>
+  </div>
+
+  <div class="section-header">Sponsorship Tier Status</div>
+
+  <table class="sp-table">
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Listed Price</th>
+        <th>Sponsor / Contact</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Notes & Next Steps</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="tier-name">Title Sponsor</div><div class="tier-price">$25,000 · 1 avail.</div></td>
+        <td>$25,000</td>
+        <td><div class="sponsor-name">Komandor</div><div class="sponsor-company">Contact: Lucian Ezman<br>Payment via: Janez Hlebanja / Omni Surfaces</div></td>
+        <td><strong>$25,000</strong></td>
+        <td><span class="badge badge-paid">Paid</span></td>
+        <td class="notes-text">✅ Payment received via Omni Surfaces. ⚠️ <strong>Action needed:</strong> Adam to fix logo on website &amp; email notifications; confirm Komandor branding assets received; explore if Komandor wants additional foursomes.</td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Dinner Sponsor</div><div class="tier-price">$15,000 · 1 avail.</div></td>
+        <td>$15,000</td>
+        <td><div class="sponsor-name">⚠️ OPEN</div><div class="sponsor-company">Michael Currie / Currie Group<br>may fill at custom rate</div></td>
+        <td><strong>$0</strong></td>
+        <td><span class="badge badge-open">Needs Clarif.</span></td>
+        <td class="notes-text">⚠️ Tracker lists Currie at "Lunch" level at $10K (not the $15K Dinner tier). Meeting minutes say he's "good for $10K dinner." <strong>Clarify and document Currie's package in writing.</strong> Decide whether to market $15K dinner tier to others.</td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Michael Currie Package</div><div class="tier-price">Custom bundle</div></td>
+        <td>Custom</td>
+        <td><div class="sponsor-name">Michael Currie</div><div class="sponsor-company">Currie Group</div></td>
+        <td><strong>$10,000</strong></td>
+        <td><span class="badge badge-confirmed">Confirmed</span></td>
+        <td class="notes-text">Custom package: hole-in-one sponsorship + advertisements + 1 complimentary foursome. Listed as "Lunch" in tracker. <strong>Need written confirmation &amp; invoice sent.</strong></td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Lunch Sponsor</div><div class="tier-price">$3,000 · 1 avail.</div></td>
+        <td>$3,000</td>
+        <td><div class="sponsor-name">Status unclear</div><div class="sponsor-company">May be absorbed into Currie deal</div></td>
+        <td><strong>$0–$3,000</strong></td>
+        <td><span class="badge badge-open">TBD</span></td>
+        <td class="notes-text">Formal $3K Lunch Sponsor (signage at 17th hole lunch area) may still be available. Confirm whether Currie's deal covers this or if it needs a separate sponsor.</td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">On-Course Activities</div><div class="tier-price">$3,000 each · 3 slots</div></td>
+        <td>$3,000 ea.</td>
+        <td><div class="sponsor-name">Infralink (Mike White)</div><div class="sponsor-company">Tevelec (John White)</div></td>
+        <td><strong>$6,000</strong></td>
+        <td><span class="badge badge-confirmed">2 of 3 Confirmed</span></td>
+        <td class="notes-text">Infralink &amp; Tevelec each confirmed at $3K "General" level. Hole-in-One ($3K) covered by Currie bundle. 1 activity slot (putting/nearest/longest drive) may still be open. <strong>Collect payment from Infralink &amp; Tevelec.</strong></td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Money Circle (Par 3)</div><div class="tier-price">$50/hole up to 4 holes</div></td>
+        <td>Variable</td>
+        <td><div class="sponsor-name">Gil Crooc</div><div class="sponsor-company">Wanderful Itineraries</div></td>
+        <td><strong>$200</strong></td>
+        <td><span class="badge badge-confirmed">Confirmed</span></td>
+        <td class="notes-text">Money Circle confirmed at Hole X. Linda Yeh to provide QR codes on scorecards for additional donations. Expand to up to 4 par-3 holes if viable.</td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Hole Sponsors</div><div class="tier-price">$500 × 18 holes</div></td>
+        <td>$500 ea.</td>
+        <td><div class="sponsor-name">3 unnamed vendors</div><div class="sponsor-company">Via Mike — not yet named in tracker</div></td>
+        <td><strong>$3,000</strong><div style="font-size:10px;color:#718096">($9,000 potential)</div></td>
+        <td><span class="badge badge-contacted">~50% in progress</span></td>
+        <td class="notes-text">~9 holes estimated confirmed per Tasks Timeline. 3 contacts from Mike at $1K each still at "Contacted" (unnamed). <strong>Mike/Gerson to identify, name, and convert all contacted holes this week. Recruit remaining ~9.</strong></td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Cart Sponsors</div><div class="tier-price">$250 × 72 carts</div></td>
+        <td>$250 ea.</td>
+        <td><div class="sponsor-name">🔴 None yet</div></td>
+        <td><strong>$0</strong><div style="font-size:10px;color:#718096">($18,000 potential)</div></td>
+        <td><span class="badge badge-notstarted">Not Started</span></td>
+        <td class="notes-text">$18,000 in completely untapped revenue. Low-commitment ask ($250) ideal for bulk outreach. <strong>Assign an owner and launch outreach strategy immediately. Target personal networks &amp; local businesses.</strong></td>
+      </tr>
+      <tr>
+        <td><div class="tier-name">Prize / Raffle Sponsors</div><div class="tier-price">In-kind donations</div></td>
+        <td>In-kind</td>
+        <td><div class="sponsor-name">Golf Town (contacted)</div><div class="sponsor-company">Via Gerard — hats, balls, etc.</div></td>
+        <td><strong>$0 confirmed</strong></td>
+        <td><span class="badge badge-notstarted">Not Started</span></td>
+        <td class="notes-text">Gerard Garcisto has Golf Town contact. No confirmed prize donors. Auction committee has <strong>no lead</strong> — highest risk item. <strong>Assign auction lead; close Golf Town; recruit 3–5 prize donors.</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-header">Revenue Summary</div>
+  <div class="fin-row">
+    <div class="chart-card">
+      <div class="chart-title">Sponsorship Revenue Breakdown</div>
+      <canvas id="sponsorChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Committed vs. Potential</div>
+      <div class="fin-breakdown">
+        <div class="fin-line paid"><span class="fin-line-label">💚 Paid (Komandor/Omni)</span><span class="fin-line-amount">$25,000</span></div>
+        <div class="fin-line confirmed"><span class="fin-line-label">🟡 Confirmed unpaid (Currie + others)</span><span class="fin-line-amount">$16,200</span></div>
+        <div class="fin-line contacted"><span class="fin-line-label">🟠 Pipeline / Contacted</span><span class="fin-line-amount">$3,000</span></div>
+        <div class="fin-line potential"><span class="fin-line-label">🔵 Untapped (Carts + Holes + Dinner)</span><span class="fin-line-amount">~$32,500+</span></div>
+        <div class="fin-line total"><span class="fin-line-label">Total Committed</span><span class="fin-line-amount">$44,200</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MARKETING PANEL ===================== -->
+<div class="panel" id="panel-marketing">
+
+  <div class="risk-banner" style="background:#fffff0;border-color:#faf089;">
+    <div class="risk-icon">⚠️</div>
+    <div>Event is <strong id="daysLeftMkt">—</strong> days away. Player registration outreach is at <strong>0%</strong> — all tasks were due in February. The updated email invite hasn't gone out yet. <strong>Launch this week.</strong></div>
+  </div>
+
+  <div class="mkt-grid">
+    <div class="mkt-card">
+      <div class="mkt-icon">🌐</div>
+      <div class="mkt-name">Tournament Website</div>
+      <div class="mkt-pct">100% complete</div>
+      <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">⚠️ Fix needed: date on front page image and Komandor logo on email notifications (Adam). Payment page not yet live.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-icon">📧</div>
+      <div class="mkt-name">Email Marketing</div>
+      <div class="mkt-pct">75% complete</div>
+      <div class="progress-bar"><div class="progress-fill fill-green" style="width:75%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;"><strong>Blocked:</strong> Updated invite (removing title sponsor logo) not yet sent. Gerson to email Anthony &amp; Miguel for SN group blast.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-icon">📱</div>
+      <div class="mkt-name">Social Media</div>
+      <div class="mkt-pct">25% complete</div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:25%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">Committee members to post personally. Need regular content cadence, venue previews, cause story, and prize teasers leading up to Sept 22.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-icon">📰</div>
+      <div class="mkt-name">Local PR / Community</div>
+      <div class="mkt-pct">25% complete</div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:25%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">Churches, parishes, community centres, bulletins. Lawn signs (18"×12", ~$30 in Canva) — status unknown if printed/distributed.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-icon">🖨️</div>
+      <div class="mkt-name">Flyer Campaign</div>
+      <div class="mkt-pct">0% — not started</div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">Format discussed: 5.5"×8" or 5.5"×4". Linda Yeh available to assist with design. Print &amp; distribute to community locations. Owner TBD.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-icon">📷</div>
+      <div class="mkt-name">Photography &amp; Video</div>
+      <div class="mkt-pct">0% — not started</div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">No photographer/videographer hired. Needed for event-day coverage and future promotion. Should be locked in now. Owner TBD.</div>
+    </div>
+  </div>
+
+  <div class="section-header">Registration Outreach — All Overdue</div>
+  <table class="sp-table">
+    <thead><tr><th>Channel</th><th>Owner</th><th>Status</th><th>Action Needed</th></tr></thead>
+    <tbody>
+      <tr><td>Email invite (updated — no title logo)</td><td>Gerson / Louis</td><td><span class="badge badge-open">Blocked</span></td><td class="notes-text">Remove Komandor logo → send this week</td></tr>
+      <tr><td>SN network — Anthony &amp; Miguel</td><td>Gerson</td><td><span class="badge badge-notstarted">Not sent</span></td><td class="notes-text">Email Anthony &amp; Miguel for men's/women's groups blast</td></tr>
+      <tr><td>Teylec business contacts</td><td>Mike</td><td><span class="badge badge-notstarted">Not sent</span></td><td class="notes-text">Mike to leverage Teylec network for foursomes</td></tr>
+      <tr><td>Komandor foursomes</td><td>Gerson</td><td><span class="badge badge-contacted">In discussion</span></td><td class="notes-text">Title sponsor encouraged to buy additional foursomes</td></tr>
+      <tr><td>Linda Yeh marketing support</td><td>Louis</td><td><span class="badge badge-notstarted">Not activated</span></td><td class="notes-text">Engage Linda for flyer design &amp; QR scorecard production</td></tr>
+      <tr><td>Online payment page</td><td>Louis → Adam</td><td><span class="badge badge-open">Not built</span></td><td class="notes-text">E-transfer, credit card, cheque options — needed before any outreach converts</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================== WORKSTREAMS PANEL ===================== -->
+<div class="panel" id="panel-workstreams">
+  <div class="ws-grid">
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">🏛️ Governance &amp; Finance</div><div class="ws-pct">~85%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-green" style="width:85%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Budget &amp; financial planning</span><span><span class="badge badge-done">100%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Legal/charity registration</span><span><span class="badge badge-done">100%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Banking setup</span><span><span class="badge badge-done">100%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Committee formation</span><span><span class="badge badge-inprog">50%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Payment page (Adam)</span><span><span class="badge badge-open">Blocked</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">💰 Sponsorships &amp; Revenue</div><div class="ws-pct">~60%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:60%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Title sponsor (Komandor)</span><span><span class="badge badge-paid">Paid</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Dinner/Lunch (Currie)</span><span><span class="badge badge-confirmed">Confirmed</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Hole sponsors</span><span><span class="badge badge-inprog">~50%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Cart sponsors</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Raffle/Prize gifts</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">📣 Marketing &amp; Comms</div><div class="ws-pct">~45%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:45%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Website</span><span><span class="badge badge-done">100%</span> <span class="ws-item-owner">Louis</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Email marketing</span><span><span class="badge badge-inprog">75%</span> <span class="ws-item-owner">Louis</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Social media campaign</span><span><span class="badge badge-inprog">25%</span> <span class="ws-item-owner">Louis</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Local PR</span><span><span class="badge badge-inprog">25%</span> <span class="ws-item-owner">Louis</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Photography/video</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">🏌️ Player Registration</div><div class="ws-pct">~20%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-orange" style="width:20%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Registration portal built</span><span><span class="badge badge-done">100%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Foursome outreach</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Individual registration</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Dinner-only invites</span><span><span class="badge badge-open">Overdue</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">⛳ Golf Course Coordination</div><div class="ws-pct">0%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Course setup plan</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Tee time booking</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Scoring system</span><span><span class="badge badge-open">Overdue</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Signage placement plan</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">🍽️ Food &amp; Beverage</div><div class="ws-pct">~30%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-orange" style="width:30%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">The Vue — dinner catering</span><span><span class="badge badge-inprog">50%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">On-course lunch plan</span><span><span class="badge badge-inprog">25%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Beverage &amp; bar plan</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Dietary requirements</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">🏆 Contests &amp; On-Course</div><div class="ws-pct">0%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Hole-in-one setup ($50K prize)</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Putting contest</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Longest drive</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Nearest to hole</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-header"><div class="ws-name">🎁 Swag, Prizes &amp; Volunteers</div><div class="ws-pct">0%</div></div>
+      <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
+      <div class="ws-items">
+        <div class="ws-item"><span class="ws-item-name">Player swag bags</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Prize procurement</span><span><span class="badge badge-notstarted">0%</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Auction <span class="flag">NO LEAD</span></span><span><span class="badge badge-open">At Risk</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Volunteer recruitment</span><span><span class="badge badge-notstarted">0%</span></span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== ACTIONS PANEL ===================== -->
+<div class="panel" id="panel-actions">
+  <div style="margin-bottom:10px;font-size:11px;color:#718096;">As of May 11, 2026 · 134 days to event · Sourced from meeting minutes and Tasks Timeline</div>
+
+  <div class="action-list">
+
+    <div class="action-item">
+      <div class="action-priority p-red">1</div>
+      <div class="action-content">
+        <div class="action-title">Send updated email invite (remove Komandor logo)</div>
+        <div class="action-detail">May 7 meeting resolved to remove title sponsor logo from invitation. Invite has not been sent. This is the highest-impact single action for registrations.</div>
+        <div class="action-meta"><span class="action-owner">Gerson / Louis</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-red">2</div>
+      <div class="action-content">
+        <div class="action-title">Assign Auction committee lead — critical gap</div>
+        <div class="action-detail">No one owns the Auction workstream. Swag, raffle prizes, and the auction are all at 0% with no owner. This is the highest-risk gap in the project.</div>
+        <div class="action-meta"><span class="action-owner">Louis (Planning lead)</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-red">3</div>
+      <div class="action-content">
+        <div class="action-title">Clarify and document Michael Currie's sponsorship deal</div>
+        <div class="action-detail">Tracker says "Lunch / $10K" — meeting minutes say "dinner including foursome." Mismatch with website tiers must be resolved before materials go out. Get written confirmation and send invoice.</div>
+        <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-red">4</div>
+      <div class="action-content">
+        <div class="action-title">Launch cart sponsor outreach — $18,000 uncaptured</div>
+        <div class="action-detail">72 cart spots at $250 each. Zero outreach started. This is the single largest untapped revenue category. Assign an owner and begin personal network outreach immediately.</div>
+        <div class="action-meta"><span class="action-owner">TBD — needs owner</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-orange">5</div>
+      <div class="action-content">
+        <div class="action-title">Gerson emails Anthony &amp; Miguel — supernumerary network blast</div>
+        <div class="action-detail">Distribute to men's and women's SN groups for player registration. Flagged in May 7 minutes as a key outreach channel.</div>
+        <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-orange">6</div>
+      <div class="action-content">
+        <div class="action-title">Louis contacts Adam to build payment page</div>
+        <div class="action-detail">Need e-transfer, credit card, and cheque options. Registration conversions will be hampered until payment is frictionless. Also: fix date image and email logo on website.</div>
+        <div class="action-meta"><span class="action-owner">Louis → Adam</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-orange">7</div>
+      <div class="action-content">
+        <div class="action-title">Convert Mike's 3 hole sponsor contacts to confirmed</div>
+        <div class="action-detail">3 unnamed vendor contacts from Mike sitting at "Contacted / $1,000 each" in tracker. No company names recorded. Follow up and get confirmed with signed agreements.</div>
+        <div class="action-meta"><span class="action-owner">Mike / Gerson</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-orange">8</div>
+      <div class="action-content">
+        <div class="action-title">Begin all Golf Course Coordination tasks — all overdue</div>
+        <div class="action-detail">Course setup plan, tee time booking, and scoring system were all due in March 2026 and remain at 0%. Royal Woodbine needs to be contacted immediately.</div>
+        <div class="action-meta"><span class="action-owner">TBD</span><span class="action-due">Overdue since March</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-yellow">9</div>
+      <div class="action-content">
+        <div class="action-title">Print and distribute flyers</div>
+        <div class="action-detail">Format decided: 5.5"×8" or 5.5"×4". Linda Yeh available for design support. Distribute to churches, parishes, community centres, and bulletin boards.</div>
+        <div class="action-meta"><span class="action-owner">Louis / Linda Yeh</span><span class="action-due">1–2 weeks</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-yellow">10</div>
+      <div class="action-content">
+        <div class="action-title">Book photographer and videographer</div>
+        <div class="action-detail">No owner, no hire. Needed for event-day coverage. Good photos/video support future WCF event fundraising and promotion.</div>
+        <div class="action-meta"><span class="action-owner">TBD</span><span class="action-due">2–3 weeks</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-priority p-yellow">11</div>
+      <div class="action-content">
+        <div class="action-title">Gerson meets with Yanez and Lucian (Komandor)</div>
+        <div class="action-detail">Confirm branding assets, explore additional foursome purchases, and align on their speaking slot at dinner. This relationship should be actively managed as title sponsor.</div>
+        <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">2 weeks</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// Countdown
+function updateCountdown() {
+  const event = new Date('2026-09-22T10:00:00');
+  const now = new Date();
+  const days = Math.ceil((event - now) / (1000 * 60 * 60 * 24));
+  document.getElementById('daysLeft').textContent = days;
+  const mkt = document.getElementById('daysLeftMkt');
+  if (mkt) mkt.textContent = days;
+}
+updateCountdown();
+
+// Tabs
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab[onclick="showTab('${name}')"]`).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'sponsorship') setTimeout(renderChart, 50);
+}
+
+// Sponsorship donut chart
+let chartRendered = false;
+function renderChart() {
+  if (chartRendered) return;
+  chartRendered = true;
+  const ctx = document.getElementById('sponsorChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Paid (Komandor)', 'Confirmed unpaid', 'Contacted pipeline', 'Uncaptured potential'],
+      datasets: [{
+        data: [25000, 16200, 3000, 32500],
+        backgroundColor: ['#48bb78', '#ecc94b', '#ed8936', '#bee3f8'],
+        borderWidth: 2,
+        borderColor: '#ffffff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` $${ctx.parsed.toLocaleString()}`
+          }
+        }
+      },
+      cutout: '60%'
+    }
+  });
+}
+
+// sendPrompt helpers
+function sp(msg) { if (window.sendPrompt) window.sendPrompt(msg); }
+</script>
+</body>
+</html>
