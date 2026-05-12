@@ -4,147 +4,147 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WCF Golf Tournament 2026 — Project Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
 <style>
 :root { color-scheme: light; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; font-size: 13px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #edf2f7; color: #1a202c; font-size: 16px; line-height: 1.6; }
 
 /* HEADER */
-.header { background: linear-gradient(135deg, #1a4731 0%, #276749 100%); color: white; padding: 18px 24px 16px; }
+.header { background: linear-gradient(135deg, #1a4731 0%, #276749 100%); color: white; padding: 24px 32px 20px; }
 .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.event-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-.event-subtitle { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.event-title { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
+.event-subtitle { font-size: 16px; opacity: 0.9; margin-top: 4px; }
 .countdown-box { text-align: right; }
-.countdown-days { font-size: 32px; font-weight: 800; line-height: 1; }
-.countdown-label { font-size: 10px; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px; }
-.header-meta { display: flex; gap: 20px; margin-top: 10px; font-size: 11px; opacity: 0.85; }
-.header-meta span { display: flex; align-items: center; gap: 4px; }
+.countdown-days { font-size: 48px; font-weight: 800; line-height: 1; }
+.countdown-label { font-size: 13px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.header-meta { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 14px; font-size: 14px; opacity: 0.95; }
+.header-meta span { display: flex; align-items: center; gap: 5px; }
 
 /* TABS */
-.tab-bar { background: white; border-bottom: 1px solid #e2e8f0; display: flex; padding: 0 24px; position: sticky; top: 0; z-index: 10; }
-.tab { padding: 10px 14px; font-size: 12px; font-weight: 500; color: #718096; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.tab.active { color: #276749; border-bottom-color: #276749; font-weight: 600; }
-.tab:hover:not(.active) { color: #2d3748; }
+.tab-bar { background: white; border-bottom: 2px solid #cbd5e0; display: flex; padding: 0 32px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.tab { padding: 16px 20px; font-size: 15px; font-weight: 500; color: #4a5568; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tab.active { color: #276749; border-bottom-color: #276749; font-weight: 700; }
+.tab:hover:not(.active) { color: #1a202c; background: #f7fafc; }
 
 /* MAIN */
-.main { padding: 16px 24px 32px; max-width: 1100px; }
+.main { padding: 24px 32px 48px; max-width: 1200px; }
 
 /* PANELS */
 .panel { display: none; }
 .panel.active { display: block; }
 
 /* METRIC CARDS */
-.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-.metric-card { background: white; border-radius: 8px; padding: 14px 16px; border-left: 3px solid #276749; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.metric-val { font-size: 22px; font-weight: 700; color: #1a202c; line-height: 1.1; }
-.metric-label { font-size: 11px; color: #718096; margin-top: 3px; }
-.metric-card.red { border-left-color: #e53e3e; }
-.metric-card.yellow { border-left-color: #d69e2e; }
-.metric-card.blue { border-left-color: #3182ce; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.metric-card { background: white; border-radius: 10px; padding: 20px 22px; border-left: 5px solid #276749; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.metric-val { font-size: 30px; font-weight: 700; color: #1a202c; line-height: 1.1; }
+.metric-label { font-size: 14px; color: #4a5568; margin-top: 5px; font-weight: 500; }
+.metric-card.red { border-left-color: #c53030; }
+.metric-card.yellow { border-left-color: #b7791f; }
+.metric-card.blue { border-left-color: #2b6cb0; }
 
 /* STATUS BADGES */
-.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
 .badge-paid { background: #c6f6d5; color: #22543d; }
 .badge-confirmed { background: #fefcbf; color: #744210; }
 .badge-contacted { background: #fed7aa; color: #7b341e; }
 .badge-open { background: #fed7d7; color: #742a2a; }
-.badge-notstarted { background: #e2e8f0; color: #4a5568; }
+.badge-notstarted { background: #e2e8f0; color: #2d3748; }
 .badge-risk { background: #fed7d7; color: #742a2a; }
 .badge-done { background: #c6f6d5; color: #22543d; }
-.badge-inprog { background: #bee3f8; color: #2a4365; }
+.badge-inprog { background: #bee3f8; color: #1a365d; }
 
 /* SECTION HEADERS */
-.section-header { font-size: 13px; font-weight: 700; color: #2d3748; margin: 18px 0 10px; display: flex; align-items: center; gap: 6px; }
-.section-header::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+.section-header { font-size: 17px; font-weight: 700; color: #1a202c; margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
+.section-header::after { content: ''; flex: 1; height: 2px; background: #cbd5e0; }
 
 /* SPONSOR TABLE */
-.sp-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.sp-table th { background: #2d3748; color: white; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
-.sp-table td { padding: 10px 12px; border-bottom: 1px solid #f0f4f8; vertical-align: top; }
+.sp-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.sp-table th { background: #2d3748; color: white; padding: 14px 16px; text-align: left; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.sp-table td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; vertical-align: top; font-size: 15px; line-height: 1.5; }
 .sp-table tr:last-child td { border-bottom: none; }
 .sp-table tr:hover td { background: #f7fafc; }
-.sp-table .tier-name { font-weight: 600; color: #1a202c; }
-.sp-table .tier-price { font-size: 11px; color: #718096; }
-.sp-table .sponsor-name { font-weight: 500; }
-.sp-table .sponsor-company { font-size: 11px; color: #718096; }
-.sp-table .notes-text { font-size: 11px; color: #4a5568; line-height: 1.4; }
-.flag { display: inline-block; font-size: 10px; background: #fed7d7; color: #742a2a; padding: 1px 5px; border-radius: 3px; font-weight: 600; margin-left: 4px; }
+.sp-table .tier-name { font-weight: 700; color: #1a202c; font-size: 15px; }
+.sp-table .tier-price { font-size: 13px; color: #4a5568; margin-top: 2px; }
+.sp-table .sponsor-name { font-weight: 600; font-size: 15px; }
+.sp-table .sponsor-company { font-size: 13px; color: #4a5568; margin-top: 2px; }
+.sp-table .notes-text { font-size: 14px; color: #2d3748; line-height: 1.6; }
+.flag { display: inline-block; font-size: 12px; background: #fed7d7; color: #742a2a; padding: 2px 7px; border-radius: 4px; font-weight: 700; margin-left: 4px; }
 
 /* WORKSTREAM GRID */
-.ws-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.ws-card { background: white; border-radius: 8px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.ws-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.ws-name { font-weight: 600; font-size: 12px; }
-.ws-pct { font-size: 11px; color: #718096; }
-.progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-.fill-green { background: #48bb78; }
-.fill-yellow { background: #ecc94b; }
-.fill-orange { background: #ed8936; }
-.fill-red { background: #fc8181; }
-.ws-items { margin-top: 10px; }
-.ws-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-top: 1px solid #f0f4f8; font-size: 11px; }
-.ws-item-name { color: #4a5568; }
-.ws-item-owner { color: #a0aec0; font-size: 10px; }
+.ws-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.ws-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.ws-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.ws-name { font-weight: 700; font-size: 16px; color: #1a202c; }
+.ws-pct { font-size: 15px; color: #2d3748; font-weight: 600; }
+.progress-bar { height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 6px; transition: width 0.3s; }
+.fill-green { background: #38a169; }
+.fill-yellow { background: #d69e2e; }
+.fill-orange { background: #dd6b20; }
+.fill-red { background: #e53e3e; }
+.ws-items { margin-top: 14px; }
+.ws-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid #e2e8f0; font-size: 14px; }
+.ws-item-name { color: #2d3748; font-weight: 500; }
+.ws-item-owner { color: #4a5568; font-size: 13px; }
 
 /* ACTION ITEMS */
-.action-list { display: flex; flex-direction: column; gap: 8px; }
-.action-item { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; gap: 10px; align-items: flex-start; }
-.action-priority { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 1px; }
-.p-red { background: #e53e3e; }
-.p-orange { background: #dd6b20; }
-.p-yellow { background: #d69e2e; color: #1a202c; }
+.action-list { display: flex; flex-direction: column; gap: 12px; }
+.action-item { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); display: flex; gap: 16px; align-items: flex-start; }
+.action-priority { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 2px; }
+.p-red { background: #c53030; }
+.p-orange { background: #c05621; }
+.p-yellow { background: #b7791f; color: white; }
 .action-content { flex: 1; }
-.action-title { font-weight: 600; font-size: 12px; color: #1a202c; }
-.action-detail { font-size: 11px; color: #718096; margin-top: 2px; line-height: 1.4; }
-.action-meta { display: flex; gap: 8px; margin-top: 4px; }
-.action-owner { font-size: 10px; background: #edf2f7; color: #4a5568; padding: 1px 6px; border-radius: 3px; font-weight: 500; }
-.action-due { font-size: 10px; color: #e53e3e; font-weight: 500; }
+.action-title { font-weight: 700; font-size: 16px; color: #1a202c; line-height: 1.4; }
+.action-detail { font-size: 15px; color: #2d3748; margin-top: 5px; line-height: 1.6; }
+.action-meta { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.action-owner { font-size: 13px; background: #edf2f7; color: #2d3748; padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+.action-due { font-size: 13px; color: #c53030; font-weight: 700; }
 
 /* FINANCIALS */
-.fin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.chart-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.chart-title { font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 12px; }
-.fin-breakdown { display: flex; flex-direction: column; gap: 8px; }
-.fin-line { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 6px; }
+.fin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.chart-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.chart-title { font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px; }
+.fin-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.fin-line { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-radius: 8px; }
 .fin-line.paid { background: #f0fff4; }
 .fin-line.confirmed { background: #fffff0; }
 .fin-line.contacted { background: #fffaf0; }
 .fin-line.potential { background: #ebf8ff; }
-.fin-line.total { background: #2d3748; color: white; font-weight: 700; border-radius: 6px; }
-.fin-line-label { font-size: 12px; font-weight: 500; }
-.fin-line-amount { font-size: 14px; font-weight: 700; }
+.fin-line.total { background: #2d3748; color: white; font-weight: 700; border-radius: 8px; }
+.fin-line-label { font-size: 15px; font-weight: 500; }
+.fin-line-amount { font-size: 18px; font-weight: 700; }
 
 /* MARKETING */
-.mkt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.mkt-card { background: white; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.mkt-icon { font-size: 20px; margin-bottom: 6px; }
-.mkt-name { font-weight: 600; font-size: 12px; margin-bottom: 4px; }
-.mkt-pct { font-size: 11px; color: #718096; margin-bottom: 6px; }
-.mkt-note { font-size: 10px; color: #4a5568; line-height: 1.4; }
+.mkt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.mkt-card { background: white; border-radius: 10px; padding: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.mkt-icon { font-size: 28px; margin-bottom: 8px; }
+.mkt-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; color: #1a202c; }
+.mkt-pct { font-size: 14px; color: #2d3748; margin-bottom: 8px; font-weight: 500; }
+.mkt-note { font-size: 14px; color: #2d3748; line-height: 1.6; }
 
 /* COMMITTEES */
-.comm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.comm-card { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.comm-name { font-weight: 600; font-size: 12px; margin-bottom: 4px; }
-.comm-lead { font-size: 11px; color: #4a5568; }
-.comm-lead.no-lead { color: #e53e3e; font-weight: 600; }
+.comm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.comm-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.comm-name { font-weight: 700; font-size: 16px; margin-bottom: 6px; color: #1a202c; }
+.comm-lead { font-size: 15px; color: #2d3748; }
+.comm-lead.no-lead { color: #c53030; font-weight: 700; }
 
 /* SHAREPOINT NOTE */
-.sp-note { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 11px; color: #2a4365; line-height: 1.5; }
-.sp-note strong { display: block; font-size: 12px; margin-bottom: 4px; }
+.sp-note { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 10px; padding: 16px 18px; margin-bottom: 20px; font-size: 14px; color: #1a365d; line-height: 1.6; }
+.sp-note strong { display: block; font-size: 15px; margin-bottom: 4px; }
 
 /* SEND PROMPT BUTTONS */
-.drill-btn { display: inline-block; margin-top: 8px; padding: 5px 10px; background: #276749; color: white; border: none; border-radius: 5px; font-size: 10px; font-weight: 600; cursor: pointer; }
+.drill-btn { display: inline-block; margin-top: 10px; padding: 8px 14px; background: #276749; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .drill-btn:hover { background: #1a4731; }
 
 /* RISK BANNER */
-.risk-banner { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; font-size: 11px; color: #742a2a; }
-.risk-icon { font-size: 18px; flex-shrink: 0; }
+.risk-banner { background: #fff5f5; border: 2px solid #fc8181; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 14px; align-items: center; font-size: 15px; color: #742a2a; line-height: 1.6; }
+.risk-icon { font-size: 26px; flex-shrink: 0; }
 
 /* TIMELINE */
-.timeline-bar { position: relative; background: #e2e8f0; border-radius: 4px; height: 8px; margin: 4px 0 2px; }
+.timeline-bar { position: relative; background: #e2e8f0; border-radius: 4px; height: 10px; margin: 4px 0 2px; }
 .timeline-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; }
 </style>
 </head>
@@ -281,7 +281,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <!-- ===================== SPONSORSHIP PANEL ===================== -->
 <div class="panel" id="panel-sponsorship">
 
-  <div class="metrics">
+  <div class="section-header">Revenue Summary</div>
+  <div class="fin-row">
+    <div class="chart-card">
+      <div class="chart-title">Sponsorship Revenue Breakdown</div>
+      <div style="position:relative;height:280px;">
+        <canvas id="sponsorChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Committed vs. Potential</div>
+      <div class="fin-breakdown">
+        <div class="fin-line paid"><span class="fin-line-label">💚 Paid (Komandor/Omni)</span><span class="fin-line-amount">$25,000</span></div>
+        <div class="fin-line confirmed"><span class="fin-line-label">🟡 Confirmed unpaid (Currie + others)</span><span class="fin-line-amount">$16,200</span></div>
+        <div class="fin-line contacted"><span class="fin-line-label">🟠 Pipeline / Contacted</span><span class="fin-line-amount">$3,000</span></div>
+        <div class="fin-line potential"><span class="fin-line-label">🔵 Untapped (Carts + Holes + Dinner)</span><span class="fin-line-amount">~$32,500+</span></div>
+        <div class="fin-line total"><span class="fin-line-label">Total Committed</span><span class="fin-line-amount">$44,200</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="metrics" style="margin-top:24px;">
     <div class="metric-card">
       <div class="metric-val">$25,000</div>
       <div class="metric-label">💚 Paid · Komandor/Omni Surfaces</div>
@@ -366,7 +386,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <td><div class="tier-name">Hole Sponsors</div><div class="tier-price">$500 × 18 holes</div></td>
         <td>$500 ea.</td>
         <td><div class="sponsor-name">3 unnamed vendors</div><div class="sponsor-company">Via Mike — not yet named in tracker</div></td>
-        <td><strong>$3,000</strong><div style="font-size:10px;color:#718096">($9,000 potential)</div></td>
+        <td><strong>$3,000</strong><div style="font-size:13px;color:#4a5568;margin-top:3px;">($9,000 potential)</div></td>
         <td><span class="badge badge-contacted">~50% in progress</span></td>
         <td class="notes-text">~9 holes estimated confirmed per Tasks Timeline. 3 contacts from Mike at $1K each still at "Contacted" (unnamed). <strong>Mike/Gerson to identify, name, and convert all contacted holes this week. Recruit remaining ~9.</strong></td>
       </tr>
@@ -374,7 +394,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <td><div class="tier-name">Cart Sponsors</div><div class="tier-price">$250 × 72 carts</div></td>
         <td>$250 ea.</td>
         <td><div class="sponsor-name">🔴 None yet</div></td>
-        <td><strong>$0</strong><div style="font-size:10px;color:#718096">($18,000 potential)</div></td>
+        <td><strong>$0</strong><div style="font-size:13px;color:#4a5568;margin-top:3px;">($18,000 potential)</div></td>
         <td><span class="badge badge-notstarted">Not Started</span></td>
         <td class="notes-text">$18,000 in completely untapped revenue. Low-commitment ask ($250) ideal for bulk outreach. <strong>Assign an owner and launch outreach strategy immediately. Target personal networks &amp; local businesses.</strong></td>
       </tr>
@@ -389,23 +409,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     </tbody>
   </table>
 
-  <div class="section-header">Revenue Summary</div>
-  <div class="fin-row">
-    <div class="chart-card">
-      <div class="chart-title">Sponsorship Revenue Breakdown</div>
-      <canvas id="sponsorChart" height="200"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Committed vs. Potential</div>
-      <div class="fin-breakdown">
-        <div class="fin-line paid"><span class="fin-line-label">💚 Paid (Komandor/Omni)</span><span class="fin-line-amount">$25,000</span></div>
-        <div class="fin-line confirmed"><span class="fin-line-label">🟡 Confirmed unpaid (Currie + others)</span><span class="fin-line-amount">$16,200</span></div>
-        <div class="fin-line contacted"><span class="fin-line-label">🟠 Pipeline / Contacted</span><span class="fin-line-amount">$3,000</span></div>
-        <div class="fin-line potential"><span class="fin-line-label">🔵 Untapped (Carts + Holes + Dinner)</span><span class="fin-line-amount">~$32,500+</span></div>
-        <div class="fin-line total"><span class="fin-line-label">Total Committed</span><span class="fin-line-amount">$44,200</span></div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ===================== MARKETING PANEL ===================== -->
@@ -575,7 +578,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <!-- ===================== ACTIONS PANEL ===================== -->
 <div class="panel" id="panel-actions">
-  <div style="margin-bottom:10px;font-size:11px;color:#718096;">As of May 11, 2026 · 134 days to event · Sourced from meeting minutes and Tasks Timeline</div>
+  <div style="margin-bottom:16px;font-size:14px;color:#4a5568;font-weight:500;">As of May 11, 2026 · 134 days to event · Sourced from meeting minutes and Tasks Timeline</div>
 
   <div class="action-list">
 
@@ -701,38 +704,39 @@ function showTab(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelector(`.tab[onclick="showTab('${name}')"]`).classList.add('active');
   document.getElementById('panel-' + name).classList.add('active');
-  if (name === 'sponsorship') setTimeout(renderChart, 50);
+  if (name === 'sponsorship') setTimeout(renderChart, 150);
 }
 
 // Sponsorship donut chart
-let chartRendered = false;
+let sponsorChartInstance = null;
 function renderChart() {
-  if (chartRendered) return;
-  chartRendered = true;
+  if (typeof Chart === 'undefined') { setTimeout(renderChart, 300); return; }
   const ctx = document.getElementById('sponsorChart');
   if (!ctx) return;
-  new Chart(ctx, {
+  if (sponsorChartInstance) { sponsorChartInstance.destroy(); }
+  sponsorChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: ['Paid (Komandor)', 'Confirmed unpaid', 'Contacted pipeline', 'Uncaptured potential'],
       datasets: [{
         data: [25000, 16200, 3000, 32500],
-        backgroundColor: ['#48bb78', '#ecc94b', '#ed8936', '#bee3f8'],
-        borderWidth: 2,
+        backgroundColor: ['#38a169', '#d69e2e', '#dd6b20', '#63b3ed'],
+        borderWidth: 3,
         borderColor: '#ffffff'
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+        legend: { position: 'bottom', labels: { font: { size: 14 }, padding: 16, color: '#1a202c' } },
         tooltip: {
           callbacks: {
-            label: (ctx) => ` $${ctx.parsed.toLocaleString()}`
+            label: (ctx) => `  $${ctx.parsed.toLocaleString()}`
           }
         }
       },
-      cutout: '60%'
+      cutout: '55%'
     }
   });
 }
