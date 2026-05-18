@@ -578,7 +578,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 
 <!-- ===================== ACTIONS PANEL ===================== -->
 <div class="panel" id="panel-actions">
-  <div style="margin-bottom:16px;font-size:14px;color:#4a5568;font-weight:500;">As of May 11, 2026 · 134 days to event · Sourced from meeting minutes and Tasks Timeline</div>
+  <div id="actionsDate" style="margin-bottom:16px;font-size:14px;color:#4a5568;font-weight:500;"></div>
 
   <div class="action-list">
 
@@ -695,8 +695,12 @@ function updateCountdown() {
   document.getElementById('daysLeft').textContent = days;
   const mkt = document.getElementById('daysLeftMkt');
   if (mkt) mkt.textContent = days;
+  const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const actionsDate = document.getElementById('actionsDate');
+  if (actionsDate) actionsDate.textContent = `As of ${dateStr} · ${days} days to event · Sourced from meeting minutes and Tasks Timeline`;
 }
 updateCountdown();
+setInterval(updateCountdown, 60000); // refresh every minute
 
 // Tabs
 function showTab(name) {
