@@ -139,6 +139,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .drill-btn { display: inline-block; margin-top: 10px; padding: 8px 14px; background: #276749; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .drill-btn:hover { background: #1a4731; }
 
+/* ACTION ITEM STATUS */
+.action-item.done { border-left: 5px solid #38a169; opacity: 0.75; }
+.action-item.completed { border-left: 5px solid #2b6cb0; opacity: 0.8; }
+.action-item.cancelled { border-left: 5px solid #a0aec0; opacity: 0.55; }
+.action-item.inprog { border-left: 5px solid #d69e2e; }
+.action-item.new-item { border-left: 5px solid #805ad5; }
+.action-item.done .action-title { text-decoration: line-through; color: #4a5568; }
+.action-item.cancelled .action-title { text-decoration: line-through; color: #718096; }
+.action-status { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-right: 6px; }
+.status-done { background: #c6f6d5; color: #22543d; }
+.status-completed { background: #bee3f8; color: #1a365d; }
+.status-cancelled { background: #e2e8f0; color: #4a5568; }
+.status-inprog { background: #fefcbf; color: #744210; }
+.status-new { background: #e9d8fd; color: #553c9a; }
+
 /* RISK BANNER */
 .risk-banner { background: #fff5f5; border: 2px solid #fc8181; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 14px; align-items: center; font-size: 15px; color: #742a2a; line-height: 1.6; }
 .risk-icon { font-size: 26px; flex-shrink: 0; }
@@ -146,6 +161,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 /* TIMELINE */
 .timeline-bar { position: relative; background: #e2e8f0; border-radius: 4px; height: 10px; margin: 4px 0 2px; }
 .timeline-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; }
+
+/* REGISTRATION TRACKER */
+.reg-tracker { background: white; border-radius: 12px; padding: 22px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid #276749; margin-bottom: 24px; }
+.reg-tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 14px; }
+.reg-count-big { font-size: 36px; font-weight: 800; color: #276749; line-height: 1; }
+.reg-count-label { font-size: 14px; color: #4a5568; margin-top: 4px; font-weight: 500; }
+.reg-alert-box { background: #e9d8fd; border: 1px solid #b794f4; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #553c9a; font-weight: 600; }
+.reg-new-badge { display: inline-block; background: #276749; color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+.reg-table tr.new-reg td { background: #f0fff4; }
+.reg-table tr.pending-reg td { background: #fffff0; }
 </style>
 </head>
 <body>
@@ -164,7 +189,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
   </div>
   <div class="header-meta">
     <span>🏌️ 144 Golfers</span>
-    <span>🍽️ 50+ Dinner Guests</span>
+    <span>🍽️ Up to 250 Dinner Guests</span>
     <span>💚 Wellspring Cultural Foundation</span>
     <span>📋 Ernescliff College Redevelopment</span>
   </div>
@@ -172,8 +197,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 
 <!-- TAB BAR -->
 <div class="tab-bar">
-  <div class="tab active" onclick="showTab('overview')">Overview</div>
-  <div class="tab" onclick="showTab('actions')">Priority Actions</div>
+  <div class="tab active" onclick="showTab('actions')">Actions</div>
   <div class="tab" onclick="showTab('sponsorship')">Sponsorship</div>
   <div class="tab" onclick="showTab('marketing')">Marketing</div>
   <div class="tab" onclick="showTab('workstreams')">Workstreams</div>
@@ -181,31 +205,58 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 
 <div class="main">
 
-<!-- ===================== OVERVIEW PANEL ===================== -->
-<div class="panel active" id="panel-overview">
+<!-- OVERVIEW PANEL — removed; content merged into Actions tab -->
+<div class="panel" id="panel-overview" style="display:none">
 
-  <div class="risk-banner">
-    <div class="risk-icon">🚨</div>
-    <div><strong>Critical Risk:</strong> Auction committee has <strong>no lead assigned</strong>. This workstream is at 0% with no owner. Assign a lead immediately.</div>
+  <div class="risk-banner" style="background:#fffbeb;border-color:#f6e05e;color:#744210;">
+    <div class="risk-icon">📌</div>
+    <div><strong>A few things still to sort out:</strong> (1) Course day logistics — shotgun time, hole 7 lunch arrangement, and dinner timing are on the Jul 16 agenda. (2) Swag bags and prizes — still need someone to own this now that the auction committee is not moving forward. (3) Photographer/videographer — worth booking soon so we have coverage for the day.</div>
   </div>
 
   <div class="metrics">
     <div class="metric-card">
-      <div class="metric-val">$25,000</div>
+      <div class="metric-val">$35,000</div>
       <div class="metric-label">💚 Sponsorship Paid</div>
     </div>
     <div class="metric-card yellow">
-      <div class="metric-val">$16,200</div>
+      <div class="metric-val">$7,500+</div>
       <div class="metric-label">🟡 Confirmed (unpaid)</div>
     </div>
     <div class="metric-card blue">
-      <div class="metric-val">$44,200</div>
-      <div class="metric-label">📊 Total Pipeline</div>
+      <div class="metric-val">3 / 144</div>
+      <div class="metric-label">🏌️ Golfers Registered</div>
     </div>
     <div class="metric-card red">
       <div class="metric-val">~$32K+</div>
       <div class="metric-label">🔴 Uncaptured Potential</div>
     </div>
+  </div>
+
+  <div class="section-header">🏌️ Registration Tracker</div>
+  <div class="reg-tracker">
+    <div class="reg-tracker-header">
+      <div>
+        <div class="reg-count-big">3 <span style="font-size:20px;color:#4a5568;font-weight:600;">of 144</span></div>
+        <div class="reg-count-label">Golfer registrations confirmed · Updated July 10, 2026</div>
+        <div style="margin-top:10px;height:12px;background:#e2e8f0;border-radius:6px;overflow:hidden;max-width:320px;">
+          <div style="width:2%;height:100%;background:#dd6b20;border-radius:6px;"></div>
+        </div>
+        <div style="font-size:12px;color:#718096;margin-top:4px;">2% of target — outreach actively ramping up</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+        <div class="reg-alert-box">🆕 Lucia Shin group — potential foursome + hole sponsor<br><span style="font-size:12px;color:#718096;font-weight:400;">Lucia, Fr. Nahm, Stephen Shin + friend · $1,500 = foursome + hole · Louis responding (Jul 7)</span></div>
+        <div style="font-size:13px;color:#2d3748;text-align:right;">📧 Registration link: <strong>tinyurl.com/WellspringGOLF</strong></div>
+      </div>
+    </div>
+    <table class="sp-table reg-table">
+      <thead><tr><th>#</th><th>Name</th><th>Type</th><th>Date Registered</th><th>Confirmed Via</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Louis Williams</strong></td><td>Golfer</td><td>April 7, 2026</td><td>wcfgolf@gmail.com</td></tr>
+        <tr><td>2</td><td><strong>Gerson D'Souza</strong></td><td>Golfer</td><td>May 7, 2026</td><td>wcfgolf@gmail.com</td></tr>
+        <tr class="new-reg"><td>3</td><td><strong>Gerard Garcisto</strong> <span class="reg-new-badge">NEW</span></td><td>Golfer</td><td>July 2, 2026</td><td>wcfgolf@gmail.com</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;font-size:13px;color:#4a5568;">⚡ <strong>Maurice's task (Jul 2):</strong> Build a registration tracking process. Rob Taylor sent a shareable invite template Jul 10.</div>
   </div>
 
   <div class="section-header">Overall Project Health</div>
@@ -216,7 +267,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><strong>🏛️ Governance &amp; Finance</strong></td>
         <td><div class="progress-bar" style="margin:4px 0"><div class="progress-fill fill-green" style="width:85%"></div></div></td>
         <td><span class="badge badge-inprog">~85%</span></td>
-        <td class="notes-text">Payment page not built (Adam)</td>
+        <td class="notes-text">Payment page ✅ live (e-transfer, credit card, cheque). Committee formation in progress.</td>
       </tr>
       <tr>
         <td><strong>💰 Sponsorships &amp; Revenue</strong></td>
@@ -233,20 +284,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <tr>
         <td><strong>🏌️ Player Registration</strong></td>
         <td><div class="progress-bar" style="margin:4px 0"><div class="progress-fill fill-orange" style="width:20%"></div></div></td>
-        <td><span class="badge badge-open">~20%</span></td>
-        <td class="notes-text">All outreach overdue; payment flow blocked</td>
+        <td><span class="badge badge-inprog">~20%</span></td>
+        <td class="notes-text">3 confirmed (Louis, Gerson, Gerard). 500 flyers printed. SN outreach ramping up.</td>
       </tr>
       <tr>
         <td><strong>⛳ Golf Course &amp; F&amp;B</strong></td>
         <td><div class="progress-bar" style="margin:4px 0"><div class="progress-fill fill-red" style="width:15%"></div></div></td>
         <td><span class="badge badge-open">~15%</span></td>
-        <td class="notes-text">Course coordination not started — overdue since March</td>
+        <td class="notes-text">A few day-of details still to confirm — shotgun time, hole 7 lunch, dinner timing, and printout plan. On the Jul 16 agenda.</td>
       </tr>
       <tr>
         <td><strong>🎁 Swag, Prizes &amp; Volunteers</strong></td>
         <td><div class="progress-bar" style="margin:4px 0"><div class="progress-fill fill-red" style="width:5%"></div></div></td>
         <td><span class="badge badge-open">~5%</span></td>
-        <td class="notes-text">Auction has <span class="flag">NO LEAD</span> — highest risk</td>
+        <td class="notes-text">Auction cancelled. Swag bags &amp; prize procurement not started — assign owner.</td>
       </tr>
     </tbody>
   </table>
@@ -257,7 +308,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
     <div class="comm-card"><div class="comm-name">Planning & Marketing</div><div class="comm-lead">Louis Williams</div></div>
     <div class="comm-card"><div class="comm-name">Sponsorship</div><div class="comm-lead">Gerson D'Souza · 416.473.2385</div></div>
     <div class="comm-card"><div class="comm-name">Purchasing</div><div class="comm-lead">Gerard Garcisto</div></div>
-    <div class="comm-card" style="border: 1px solid #feb2b2;"><div class="comm-name">Auction 🚨</div><div class="comm-lead no-lead">NO LEAD ASSIGNED</div></div>
+    <div class="comm-card" style="border: 1px solid #e2e8f0; opacity: 0.55;"><div class="comm-name" style="text-decoration: line-through; color: #a0aec0;">Auction</div><div class="comm-lead" style="color: #a0aec0;">Cancelled</div></div>
     <div class="comm-card"><div class="comm-name">Programming</div><div class="comm-lead">Cherry</div></div>
     <div class="comm-card"><div class="comm-name">Contact for Sponsorships</div><div class="comm-lead">wcfgolf@gmail.com</div></div>
   </div>
@@ -277,11 +328,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
     <div class="chart-card">
       <div class="chart-title">Committed vs. Potential</div>
       <div class="fin-breakdown">
-        <div class="fin-line paid"><span class="fin-line-label">💚 Paid (Komandor/Omni)</span><span class="fin-line-amount">$25,000</span></div>
-        <div class="fin-line confirmed"><span class="fin-line-label">🟡 Confirmed unpaid (Currie + others)</span><span class="fin-line-amount">$16,200</span></div>
-        <div class="fin-line contacted"><span class="fin-line-label">🟠 Pipeline / Contacted</span><span class="fin-line-amount">$3,000</span></div>
+        <div class="fin-line paid"><span class="fin-line-label">💚 Paid (confirmed &amp; received)</span><span class="fin-line-amount">$35,000</span></div>
+        <div class="fin-line confirmed"><span class="fin-line-label">🟡 In process (Mike White $6K + Infralink +$1.5K)</span><span class="fin-line-amount">$7,500+</span></div>
+        <div class="fin-line contacted"><span class="fin-line-label">🟠 Pipeline / Contacted (Mike + 2 companies)</span><span class="fin-line-amount">TBD</span></div>
         <div class="fin-line potential"><span class="fin-line-label">🔵 Untapped (Carts + Holes + Dinner)</span><span class="fin-line-amount">~$32,500+</span></div>
-        <div class="fin-line total"><span class="fin-line-label">Total Committed</span><span class="fin-line-amount">$44,200</span></div>
+        <div class="fin-line total"><span class="fin-line-label">Total Paid &amp; Committed</span><span class="fin-line-amount">$42,500+</span></div>
       </div>
     </div>
   </div>
@@ -306,7 +357,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">Komandor</div><div class="sponsor-company">Contact: Lucian Ezman<br>Payment via: Janez Hlebanja / Omni Surfaces</div></td>
         <td><strong>$25,000</strong></td>
         <td><span class="badge badge-paid">Paid</span></td>
-        <td class="notes-text">✅ Payment received via Omni Surfaces. ⚠️ <strong>Action needed:</strong> Adam to fix logo on website &amp; email notifications; confirm Komandor branding assets received; explore if Komandor wants additional foursomes.</td>
+        <td class="notes-text">✅ Paid via Omni Surfaces. Todo: Adam fix logo on site; confirm branding assets; ask about extra foursomes.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Dinner Sponsor</div><div class="tier-price">$15,000 · 1 avail.</div></td>
@@ -314,7 +365,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">⚠️ OPEN</div><div class="sponsor-company">Michael Currie / Currie Group<br>may fill at custom rate</div></td>
         <td><strong>$0</strong></td>
         <td><span class="badge badge-open">Needs Clarif.</span></td>
-        <td class="notes-text">⚠️ Tracker lists Currie at "Lunch" level at $10K (not the $15K Dinner tier). Meeting minutes say he's "good for $10K dinner." <strong>Clarify and document Currie's package in writing.</strong> Decide whether to market $15K dinner tier to others.</td>
+        <td class="notes-text">Tracker says "Lunch / $10K"; minutes say "$10K dinner." Clarify + document in writing. Decide if $15K tier goes to someone else.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Michael Currie Package</div><div class="tier-price">Custom bundle</div></td>
@@ -322,7 +373,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">Michael Currie</div><div class="sponsor-company">Currie Group</div></td>
         <td><strong>$10,000</strong></td>
         <td><span class="badge badge-confirmed">Confirmed</span></td>
-        <td class="notes-text">Custom package: hole-in-one sponsorship + advertisements + 1 complimentary foursome. Listed as "Lunch" in tracker. <strong>Need written confirmation &amp; invoice sent.</strong></td>
+        <td class="notes-text">Hole-in-one + ads + 1 foursome. Listed as "Lunch" in tracker. Send written confirmation + invoice.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Lunch Sponsor</div><div class="tier-price">$3,000 · 1 avail.</div></td>
@@ -330,7 +381,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">Status unclear</div><div class="sponsor-company">May be absorbed into Currie deal</div></td>
         <td><strong>$0–$3,000</strong></td>
         <td><span class="badge badge-open">TBD</span></td>
-        <td class="notes-text">Formal $3K Lunch Sponsor (signage at 17th hole lunch area) may still be available. Confirm whether Currie's deal covers this or if it needs a separate sponsor.</td>
+        <td class="notes-text">Signage at hole 17 lunch area. Confirm if Currie's deal covers this, or find a separate sponsor.</td>
       </tr>
       <tr>
         <td><div class="tier-name">On-Course Activities</div><div class="tier-price">$3,000 each · 3 slots</div></td>
@@ -338,7 +389,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">Infralink (Mike White)</div><div class="sponsor-company">Tevelec (John White)</div></td>
         <td><strong>$6,000</strong></td>
         <td><span class="badge badge-confirmed">2 of 3 Confirmed</span></td>
-        <td class="notes-text">Infralink &amp; Tevelec each confirmed at $3K "General" level. Hole-in-One ($3K) covered by Currie bundle. 1 activity slot (putting/nearest/longest drive) may still be open. <strong>Collect payment from Infralink &amp; Tevelec.</strong></td>
+        <td class="notes-text">Infralink + Tevelec confirmed. Hole-in-One covered by Currie. 1 slot may still be open. Collect payment from both.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Money Circle (Par 3)</div><div class="tier-price">$50/hole up to 4 holes</div></td>
@@ -346,7 +397,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">Gil Crooc</div><div class="sponsor-company">Wanderful Itineraries</div></td>
         <td><strong>$200</strong></td>
         <td><span class="badge badge-confirmed">Confirmed</span></td>
-        <td class="notes-text">Money Circle confirmed at Hole X. Linda Yeh to provide QR codes on scorecards for additional donations. Expand to up to 4 par-3 holes if viable.</td>
+        <td class="notes-text">Confirmed. Linda Yeh doing QR codes on scorecards. Can expand to up to 4 par-3 holes.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Hole Sponsors</div><div class="tier-price">$500 × 18 holes</div></td>
@@ -354,7 +405,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">3 unnamed vendors</div><div class="sponsor-company">Via Mike — not yet named in tracker</div></td>
         <td><strong>$3,000</strong><div style="font-size:13px;color:#4a5568;margin-top:3px;">($9,000 potential)</div></td>
         <td><span class="badge badge-contacted">~50% in progress</span></td>
-        <td class="notes-text">~9 holes estimated confirmed per Tasks Timeline. 3 contacts from Mike at $1K each still at "Contacted" (unnamed). <strong>Mike/Gerson to identify, name, and convert all contacted holes this week. Recruit remaining ~9.</strong></td>
+        <td class="notes-text">3 contacts in progress via Mike (unnamed). Follow up, confirm names, keep working through the remaining holes.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Cart Sponsors</div><div class="tier-price">$250 × 72 carts</div></td>
@@ -362,7 +413,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">🔴 None yet</div></td>
         <td><strong>$0</strong><div style="font-size:13px;color:#4a5568;margin-top:3px;">($18,000 potential)</div></td>
         <td><span class="badge badge-notstarted">Not Started</span></td>
-        <td class="notes-text">$18,000 in completely untapped revenue. Low-commitment ask ($250) ideal for bulk outreach. <strong>Assign an owner and launch outreach strategy immediately. Target personal networks &amp; local businesses.</strong></td>
+        <td class="notes-text">$250 per cart, 72 spots. Low ask — personal networks work well. Needs an owner.</td>
       </tr>
       <tr>
         <td><div class="tier-name">Prize / Raffle Sponsors</div><div class="tier-price">In-kind donations</div></td>
@@ -370,7 +421,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <td><div class="sponsor-name">Golf Town (contacted)</div><div class="sponsor-company">Via Gerard — hats, balls, etc.</div></td>
         <td><strong>$0 confirmed</strong></td>
         <td><span class="badge badge-notstarted">Not Started</span></td>
-        <td class="notes-text">Gerard Garcisto has Golf Town contact. No confirmed prize donors. Auction committee has <strong>no lead</strong> — highest risk item. <strong>Assign auction lead; close Golf Town; recruit 3–5 prize donors.</strong></td>
+        <td class="notes-text">No auction. Still need <strong>50/50 raffle + door prizes</strong> (Louis, Jul 10). Gerard coordinating. GolfTown follow-up in progress.</td>
       </tr>
     </tbody>
   </table>
@@ -380,9 +431,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 <!-- ===================== MARKETING PANEL ===================== -->
 <div class="panel" id="panel-marketing">
 
-  <div class="risk-banner" style="background:#fffff0;border-color:#faf089;">
-    <div class="risk-icon">⚠️</div>
-    <div>Event is <strong id="daysLeftMkt">—</strong> days away. Player registration outreach is at <strong>0%</strong> — all tasks were due in February. The updated email invite hasn't gone out yet. <strong>Launch this week.</strong></div>
+  <div class="risk-banner" style="background:#f0fff4;border-color:#9ae6b4;color:#22543d;">
+    <div class="risk-icon">✅</div>
+    <div>Registration is <strong>open</strong>. <strong id="daysLeftMkt">—</strong> days to event. <strong>3 registrations confirmed</strong> — Louis Williams (Apr 7), Gerson D'Souza (May 7), Gerard Garcisto (Jul 2). 🆕 Lucia Shin group (foursome + hole sponsor, $1,500) in discussion — Louis responding (Jul 7). Target: <strong>144 golfers</strong> (Royal Woodbine venue cap, confirmed Jul 10).</div>
   </div>
 
   <div class="mkt-grid">
@@ -391,55 +442,55 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <div class="mkt-name">Tournament Website</div>
       <div class="mkt-pct">100% complete</div>
       <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
-      <div class="mkt-note" style="margin-top:6px;">⚠️ Fix needed: date on front page image and Komandor logo on email notifications (Adam). Payment page not yet live.</div>
+      <div class="mkt-note" style="margin-top:6px;">✅ Live. Registration open, all payment options working.</div>
     </div>
     <div class="mkt-card">
       <div class="mkt-icon">📧</div>
       <div class="mkt-name">Email Marketing</div>
-      <div class="mkt-pct">75% complete</div>
-      <div class="progress-bar"><div class="progress-fill fill-green" style="width:75%"></div></div>
-      <div class="mkt-note" style="margin-top:6px;"><strong>Blocked:</strong> Updated invite (removing title sponsor logo) not yet sent. Gerson to email Anthony &amp; Miguel for SN group blast.</div>
+      <div class="mkt-pct">90% complete</div>
+      <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">✅ Sent. 3 confirmed. SN letter to Anthony &amp; Miguel finalizing.</div>
     </div>
     <div class="mkt-card">
       <div class="mkt-icon">📱</div>
       <div class="mkt-name">Social Media</div>
       <div class="mkt-pct">25% complete</div>
       <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:25%"></div></div>
-      <div class="mkt-note" style="margin-top:6px;">Committee members to post personally. Need regular content cadence, venue previews, cause story, and prize teasers leading up to Sept 22.</div>
+      <div class="mkt-note" style="margin-top:6px;">Committee members posting personally. Need content cadence, venue previews, prize teasers before Sept 22.</div>
     </div>
     <div class="mkt-card">
       <div class="mkt-icon">📰</div>
       <div class="mkt-name">Local PR / Community</div>
       <div class="mkt-pct">25% complete</div>
       <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:25%"></div></div>
-      <div class="mkt-note" style="margin-top:6px;">Churches, parishes, community centres, bulletins. Lawn signs (18"×12", ~$30 in Canva) — status unknown if printed/distributed.</div>
+      <div class="mkt-note" style="margin-top:6px;">Churches, parishes, community centres. Lawn signs (~$30 in Canva) — status unknown.</div>
     </div>
     <div class="mkt-card">
       <div class="mkt-icon">🖨️</div>
       <div class="mkt-name">Flyer Campaign</div>
-      <div class="mkt-pct">0% — not started</div>
-      <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
-      <div class="mkt-note" style="margin-top:6px;">Format discussed: 5.5"×8" or 5.5"×4". Linda Yeh available to assist with design. Print &amp; distribute to community locations. Owner TBD.</div>
+      <div class="mkt-pct">60% complete</div>
+      <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:60%"></div></div>
+      <div class="mkt-note" style="margin-top:6px;">✅ 500 printed. 100 at WH. Distributing to circles, recollections, centres. Gil contacting circle coordinators.</div>
     </div>
     <div class="mkt-card">
       <div class="mkt-icon">📷</div>
       <div class="mkt-name">Photography &amp; Video</div>
       <div class="mkt-pct">0% — not started</div>
       <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
-      <div class="mkt-note" style="margin-top:6px;">No photographer/videographer hired. Needed for event-day coverage and future promotion. Should be locked in now. Owner TBD.</div>
+      <div class="mkt-note" style="margin-top:6px;">Nothing booked. Lock in soon — good ones fill up. Owner TBD.</div>
     </div>
   </div>
 
-  <div class="section-header">Registration Outreach — All Overdue</div>
+  <div class="section-header">Registration Outreach — Status</div>
   <table class="sp-table">
-    <thead><tr><th>Channel</th><th>Owner</th><th>Status</th><th>Action Needed</th></tr></thead>
+    <thead><tr><th>Channel</th><th>Owner</th><th>Status</th><th>Notes</th></tr></thead>
     <tbody>
-      <tr><td>Email invite (updated — no title logo)</td><td>Gerson / Louis</td><td><span class="badge badge-open">Blocked</span></td><td class="notes-text">Remove Komandor logo → send this week</td></tr>
-      <tr><td>SN network — Anthony &amp; Miguel</td><td>Gerson</td><td><span class="badge badge-notstarted">Not sent</span></td><td class="notes-text">Email Anthony &amp; Miguel for men's/women's groups blast</td></tr>
-      <tr><td>Teylec business contacts</td><td>Mike</td><td><span class="badge badge-notstarted">Not sent</span></td><td class="notes-text">Mike to leverage Teylec network for foursomes</td></tr>
-      <tr><td>Komandor foursomes</td><td>Gerson</td><td><span class="badge badge-contacted">In discussion</span></td><td class="notes-text">Title sponsor encouraged to buy additional foursomes</td></tr>
-      <tr><td>Linda Yeh marketing support</td><td>Louis</td><td><span class="badge badge-notstarted">Not activated</span></td><td class="notes-text">Engage Linda for flyer design &amp; QR scorecard production</td></tr>
-      <tr><td>Online payment page</td><td>Louis → Adam</td><td><span class="badge badge-open">Not built</span></td><td class="notes-text">E-transfer, credit card, cheque options — needed before any outreach converts</td></tr>
+      <tr><td>Email invite</td><td>Gerson / Louis</td><td><span class="badge badge-done">✅ Sent</span></td><td class="notes-text">3 confirmed. Lucia Shin group inquired Jul 7 ($1,500 foursome + hole). Rob sent shareable template Jul 10.</td></tr>
+      <tr><td>SN network — Anthony &amp; Miguel</td><td>Gerson</td><td><span class="badge badge-inprog">In Progress</span></td><td class="notes-text">Letter finalizing. Louis to call Rob Taylor before sending.</td></tr>
+      <tr><td>Teylec business contacts</td><td>Mike</td><td><span class="badge badge-notstarted">Not sent</span></td><td class="notes-text">Mike to leverage Teylec network for foursomes.</td></tr>
+      <tr><td>Komandor foursomes</td><td>Gerson</td><td><span class="badge badge-contacted">In discussion</span></td><td class="notes-text">Title sponsor encouraged to buy additional foursomes.</td></tr>
+      <tr><td>Linda Yeh marketing support</td><td>Louis</td><td><span class="badge badge-inprog">In Progress</span></td><td class="notes-text">Flyer design &amp; QR scorecard production underway.</td></tr>
+      <tr><td>Online payment page</td><td>Louis → Adam</td><td><span class="badge badge-done">✅ Live</span></td><td class="notes-text">E-transfer, credit card, cheque options all live.</td></tr>
     </tbody>
   </table>
 </div>
@@ -456,7 +507,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <div class="ws-item"><span class="ws-item-name">Legal/charity registration</span><span><span class="badge badge-done">100%</span></span></div>
         <div class="ws-item"><span class="ws-item-name">Banking setup</span><span><span class="badge badge-done">100%</span></span></div>
         <div class="ws-item"><span class="ws-item-name">Committee formation</span><span><span class="badge badge-inprog">50%</span></span></div>
-        <div class="ws-item"><span class="ws-item-name">Payment page (Adam)</span><span><span class="badge badge-open">Blocked</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Payment page</span><span><span class="badge badge-done">Done ✅</span></span></div>
       </div>
     </div>
 
@@ -532,118 +583,227 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <div class="ws-card-header"><div class="ws-name">🎁 Swag, Prizes &amp; Volunteers</div><div class="ws-pct">0%</div></div>
       <div class="progress-bar"><div class="progress-fill fill-red" style="width:0%"></div></div>
       <div class="ws-items">
-        <div class="ws-item"><span class="ws-item-name">Player swag bags</span><span><span class="badge badge-notstarted">0%</span></span></div>
-        <div class="ws-item"><span class="ws-item-name">Prize procurement</span><span><span class="badge badge-notstarted">0%</span></span></div>
-        <div class="ws-item"><span class="ws-item-name">Auction <span class="flag">NO LEAD</span></span><span><span class="badge badge-open">At Risk</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Player swag bags (3 balls + tees per player)</span><span><span class="badge badge-inprog">In planning</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">50/50 raffle</span><span><span class="badge badge-notstarted">Not started</span></span></div>
+        <div class="ws-item"><span class="ws-item-name">Door prizes</span><span><span class="badge badge-notstarted">Not started</span></span></div>
+        <div class="ws-item"><span class="ws-item-name" style="text-decoration: line-through; color: #a0aec0;">Auction</span><span><span class="badge badge-notstarted" style="background:#e2e8f0;color:#a0aec0;">Cancelled</span></span></div>
         <div class="ws-item"><span class="ws-item-name">Volunteer recruitment</span><span><span class="badge badge-notstarted">0%</span></span></div>
       </div>
     </div>
 
   </div>
+
+  <div class="section-header">Committees</div>
+  <div class="comm-grid">
+    <div class="comm-card"><div class="comm-name">Planning &amp; Marketing</div><div class="comm-lead">Louis Williams</div></div>
+    <div class="comm-card"><div class="comm-name">Sponsorship</div><div class="comm-lead">Gerson D'Souza · 416.473.2385</div></div>
+    <div class="comm-card"><div class="comm-name">Purchasing &amp; Budget</div><div class="comm-lead">Gerard Garcisto</div></div>
+    <div class="comm-card" style="border: 1px solid #e2e8f0; opacity: 0.55;"><div class="comm-name" style="text-decoration: line-through; color: #a0aec0;">Auction</div><div class="comm-lead" style="color: #a0aec0;">Cancelled</div></div>
+    <div class="comm-card"><div class="comm-name">Programming</div><div class="comm-lead">Cherry</div></div>
+    <div class="comm-card"><div class="comm-name">Sponsorship Contact</div><div class="comm-lead">wcfgolf@gmail.com</div></div>
+  </div>
 </div>
 
 <!-- ===================== ACTIONS PANEL ===================== -->
-<div class="panel" id="panel-actions">
+<div class="panel active" id="panel-actions">
+
+  <div class="risk-banner" style="background:#fffbeb;border-color:#f6e05e;color:#744210;">
+    <div class="risk-icon">📌</div>
+    <div>(1) <strong>50/50 raffle + door prizes</strong> — Gerard handling. (2) <strong>Lucia Shin group</strong> (foursome + hole, $1,500) — Louis responding. (3) <strong>Photographer</strong> — book soon. (4) <strong>Course logistics</strong> — Jul 16 agenda.</div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-val">$35,000</div>
+      <div class="metric-label">💚 Sponsorship Paid</div>
+    </div>
+    <div class="metric-card yellow">
+      <div class="metric-val">$7,500+</div>
+      <div class="metric-label">🟡 Confirmed (unpaid)</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-val">3 / 144</div>
+      <div class="metric-label">🏌️ Golfers Registered</div>
+    </div>
+    <div class="metric-card red">
+      <div class="metric-val">~$32K+</div>
+      <div class="metric-label">🔴 Uncaptured Potential</div>
+    </div>
+  </div>
+
+  <div class="section-header">🏌️ Registration Tracker</div>
+  <div class="reg-tracker">
+    <div class="reg-tracker-header">
+      <div>
+        <div class="reg-count-big">3 <span style="font-size:20px;color:#4a5568;font-weight:600;">of 144</span></div>
+        <div class="reg-count-label">Golfer registrations confirmed · Updated July 10, 2026</div>
+        <div style="margin-top:10px;height:12px;background:#e2e8f0;border-radius:6px;overflow:hidden;max-width:320px;">
+          <div style="width:2%;height:100%;background:#dd6b20;border-radius:6px;"></div>
+        </div>
+        <div style="font-size:12px;color:#718096;margin-top:4px;">2% of target — outreach actively ramping up</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+        <div class="reg-alert-box">🆕 Lucia Shin group — potential foursome + hole sponsor<br><span style="font-size:12px;color:#718096;font-weight:400;">Lucia, Fr. Nahm, Stephen Shin + friend · $1,500 = foursome + hole · Louis responding (Jul 7)</span></div>
+        <div style="font-size:13px;color:#2d3748;text-align:right;">📧 Registration link: <strong>tinyurl.com/WellspringGOLF</strong></div>
+      </div>
+    </div>
+    <table class="sp-table reg-table">
+      <thead><tr><th>#</th><th>Name</th><th>Type</th><th>Date Registered</th><th>Confirmed Via</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Louis Williams</strong></td><td>Golfer</td><td>April 7, 2026</td><td>wcfgolf@gmail.com</td></tr>
+        <tr><td>2</td><td><strong>Gerson D'Souza</strong></td><td>Golfer</td><td>May 7, 2026</td><td>wcfgolf@gmail.com</td></tr>
+        <tr class="new-reg"><td>3</td><td><strong>Gerard Garcisto</strong> <span class="reg-new-badge">NEW</span></td><td>Golfer</td><td>July 2, 2026</td><td>wcfgolf@gmail.com</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;font-size:13px;color:#4a5568;">⚡ <strong>Maurice's task (Jul 2):</strong> Build a registration tracking process. Rob Taylor sent a shareable invite template Jul 10.</div>
+  </div>
+
+  <div class="section-header">📋 Action Items</div>
   <div id="actionsDate" style="margin-bottom:16px;font-size:14px;color:#4a5568;font-weight:500;"></div>
 
   <div class="action-list">
 
-    <div class="action-item">
+    <div class="action-item done">
       <div class="action-priority p-red">1</div>
       <div class="action-content">
-        <div class="action-title">Send updated email invite (remove Komandor logo)</div>
-        <div class="action-detail">May 7 meeting resolved to remove title sponsor logo from invitation. Invite has not been sent. This is the highest-impact single action for registrations.</div>
-        <div class="action-meta"><span class="action-owner">Gerson / Louis</span><span class="action-due">This week</span></div>
+        <div class="action-title"><span class="action-status status-done">✅ Done</span>Send updated email invite (remove Komandor logo)</div>
+        <div class="action-detail"><strong>3 confirmed:</strong> Gerson (May 7), Louis (Apr 7), Gerard (Jul 2). Rob Taylor sent shareable invite template Jul 10.</div>
+        <div class="action-meta"><span class="action-owner">Gerson / Louis</span><span class="action-due">Completed</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item cancelled">
       <div class="action-priority p-red">2</div>
       <div class="action-content">
-        <div class="action-title">Assign Auction committee lead — critical gap</div>
-        <div class="action-detail">No one owns the Auction workstream. Swag, raffle prizes, and the auction are all at 0% with no owner. This is the highest-risk gap in the project.</div>
-        <div class="action-meta"><span class="action-owner">Louis (Planning lead)</span><span class="action-due">This week</span></div>
+        <div class="action-title"><span class="action-status status-cancelled">❌ Cancelled</span>Assign Auction committee lead</div>
+        <div class="action-detail">Not moving forward. Gerard handling swag + prizes through Purchasing committee.</div>
+        <div class="action-meta"><span class="action-owner">n/a</span><span class="action-due">Cancelled</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item inprog">
       <div class="action-priority p-red">3</div>
       <div class="action-content">
-        <div class="action-title">Clarify and document Michael Currie's sponsorship deal</div>
-        <div class="action-detail">Tracker says "Lunch / $10K" — meeting minutes say "dinner including foursome." Mismatch with website tiers must be resolved before materials go out. Get written confirmation and send invoice.</div>
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Clarify and document Michael Currie's sponsorship deal</div>
+        <div class="action-detail">Tracker says "Lunch / $10K"; minutes say "dinner + foursome." Needs to be reconciled. Get written confirmation + send invoice.</div>
         <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">This week</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item inprog">
       <div class="action-priority p-red">4</div>
       <div class="action-content">
-        <div class="action-title">Launch cart sponsor outreach — $18,000 uncaptured</div>
-        <div class="action-detail">72 cart spots at $250 each. Zero outreach started. This is the single largest untapped revenue category. Assign an owner and begin personal network outreach immediately.</div>
-        <div class="action-meta"><span class="action-owner">TBD — needs owner</span><span class="action-due">This week</span></div>
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Launch cart sponsor outreach — $18,000 uncaptured</div>
+        <div class="action-detail">72 spots × $250. Low ask — personal networks and local businesses. Needs an owner.</div>
+        <div class="action-meta"><span class="action-owner">TBD</span><span class="action-due">Ongoing</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item inprog">
       <div class="action-priority p-orange">5</div>
       <div class="action-content">
-        <div class="action-title">Gerson emails Anthony &amp; Miguel — supernumerary network blast</div>
-        <div class="action-detail">Distribute to men's and women's SN groups for player registration. Flagged in May 7 minutes as a key outreach channel.</div>
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Gerson emails Anthony &amp; Miguel — supernumerary network blast</div>
+        <div class="action-detail">Letter finalizing after Rob Taylor's feedback. Going out this week.</div>
         <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">This week</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item completed">
       <div class="action-priority p-orange">6</div>
       <div class="action-content">
-        <div class="action-title">Louis contacts Adam to build payment page</div>
-        <div class="action-detail">Need e-transfer, credit card, and cheque options. Registration conversions will be hampered until payment is frictionless. Also: fix date image and email logo on website.</div>
-        <div class="action-meta"><span class="action-owner">Louis → Adam</span><span class="action-due">This week</span></div>
+        <div class="action-title"><span class="action-status status-completed">✔ Completed</span>Website and payment page — fully live</div>
+        <div class="action-detail">Live. E-transfer, credit card, cheque — all working.</div>
+        <div class="action-meta"><span class="action-owner">Louis → Adam</span><span class="action-due">Completed</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item inprog">
       <div class="action-priority p-orange">7</div>
       <div class="action-content">
-        <div class="action-title">Convert Mike's 3 hole sponsor contacts to confirmed</div>
-        <div class="action-detail">3 unnamed vendor contacts from Mike sitting at "Contacted / $1,000 each" in tracker. No company names recorded. Follow up and get confirmed with signed agreements.</div>
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Convert Mike's 3 hole sponsor contacts to confirmed</div>
+        <div class="action-detail">3 unnamed contacts at $1K each. Get names + signed agreements.</div>
         <div class="action-meta"><span class="action-owner">Mike / Gerson</span><span class="action-due">This week</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item inprog">
       <div class="action-priority p-orange">8</div>
       <div class="action-content">
-        <div class="action-title">Begin all Golf Course Coordination tasks — all overdue</div>
-        <div class="action-detail">Course setup plan, tee time booking, and scoring system were all due in March 2026 and remain at 0%. Royal Woodbine needs to be contacted immediately.</div>
-        <div class="action-meta"><span class="action-owner">TBD</span><span class="action-due">Overdue since March</span></div>
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Golf Course Coordination</div>
+        <div class="action-detail">Setup plan, tee times, scoring — in progress with Royal Woodbine. Details on Jul 16 agenda.</div>
+        <div class="action-meta"><span class="action-owner">TBD</span><span class="action-due">Due August</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item inprog">
       <div class="action-priority p-yellow">9</div>
       <div class="action-content">
-        <div class="action-title">Print and distribute flyers</div>
-        <div class="action-detail">Format decided: 5.5"×8" or 5.5"×4". Linda Yeh available for design support. Distribute to churches, parishes, community centres, and bulletin boards.</div>
-        <div class="action-meta"><span class="action-owner">Louis / Linda Yeh</span><span class="action-due">1–2 weeks</span></div>
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Print and distribute flyers</div>
+        <div class="action-detail">500 printed. Linda Yeh supporting design. Distributing to churches, parishes, and community centres.</div>
+        <div class="action-meta"><span class="action-owner">Louis / Linda Yeh</span><span class="action-due">In progress</span></div>
       </div>
     </div>
 
     <div class="action-item">
-      <div class="action-priority p-yellow">10</div>
+      <div class="action-priority p-orange">10</div>
       <div class="action-content">
-        <div class="action-title">Book photographer and videographer</div>
-        <div class="action-detail">No owner, no hire. Needed for event-day coverage. Good photos/video support future WCF event fundraising and promotion.</div>
-        <div class="action-meta"><span class="action-owner">TBD</span><span class="action-due">2–3 weeks</span></div>
+        <div class="action-title">Book photographer and videographer for event day</div>
+        <div class="action-detail">Nothing booked yet. Good ones fill up — worth reaching out now for event-day coverage.</div>
+        <div class="action-meta"><span class="action-owner">TBD — anyone with a contact?</span><span class="action-due">Soon</span></div>
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item completed">
       <div class="action-priority p-yellow">11</div>
       <div class="action-content">
-        <div class="action-title">Gerson meets with Yanez and Lucian (Komandor)</div>
-        <div class="action-detail">Confirm branding assets, explore additional foursome purchases, and align on their speaking slot at dinner. This relationship should be actively managed as title sponsor.</div>
-        <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">2 weeks</span></div>
+        <div class="action-title"><span class="action-status status-completed">✔ Completed</span>Gerson meets with Yanez and Lucian (Komandor)</div>
+        <div class="action-detail">Done. Branding, foursomes, and dinner speaking slot covered.</div>
+        <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">Completed</span></div>
+      </div>
+    </div>
+
+    <div class="action-item inprog">
+      <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;">★</div>
+      <div class="action-content">
+        <div class="action-title"><span class="action-status status-inprog">🔄 In Progress</span>Define registration tracking process (via AI agent)</div>
+        <div class="action-detail">3 confirmed (Louis, Gerson, Gerard). Build a repeatable tracking process — assigned to Maurice at Jul 2 meeting.</div>
+        <div class="action-meta"><span class="action-owner">Maurice</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item completed">
+      <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;">★</div>
+      <div class="action-content">
+        <div class="action-title"><span class="action-status status-completed">✔ Completed</span>Emcee confirmed — Joseph Tan</div>
+        <div class="action-detail">Gil confirmed (Jul 10): Joseph Tan emceeing dinner + awards. Comp: dinner only. Add to event schedule.</div>
+        <div class="action-meta"><span class="action-owner">Gil Crooc</span><span class="action-due">Confirmed ✅</span></div>
+      </div>
+    </div>
+
+    <div class="action-item new-item">
+      <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;">★</div>
+      <div class="action-content">
+        <div class="action-title"><span class="action-status status-new">🆕 New</span>Resolve open logistics questions (from Rob Taylor via Louis)</div>
+        <div class="action-detail">Open from Rob via Louis (Jul 9): (1) Hole 7 lunch — what about golfers starting holes 8–10? (2) 11am shotgun → ~4pm finish; 6pm dinner may be too late — 12pm start or earlier dinner? (3) End time — 8pm? (4) Printouts to recollections — one per priest? All on Jul 16 agenda.</div>
+        <div class="action-meta"><span class="action-owner">Louis + Committee</span><span class="action-due">Jul 16 check-in</span></div>
+      </div>
+    </div>
+
+    <div class="action-item new-item">
+      <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;">★</div>
+      <div class="action-content">
+        <div class="action-title"><span class="action-status status-new">🆕 New</span>Confirm Lucia Shin group — foursome + hole sponsorship</div>
+        <div class="action-detail">Lucia, Fr. Nahm, Stephen Shin + friend — want to register as a foursome. <strong>$1,500 = foursome + hole sponsor.</strong> Louis responding. Adds 4 golfers + 1 hole when confirmed.</div>
+        <div class="action-meta"><span class="action-owner">Louis</span><span class="action-due">This week</span></div>
+      </div>
+    </div>
+
+    <div class="action-item new-item">
+      <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;">★</div>
+      <div class="action-content">
+        <div class="action-title"><span class="action-status status-new">🆕 New</span>50/50 raffle, door prizes &amp; swag bags — Gerard to coordinate</div>
+        <div class="action-detail">No auction, but still need <strong>50/50 raffle + door prizes</strong> (Louis, Jul 10). Gerard coordinating. Swag: 3 balls + tees per player, GolfTown in progress. Next: trophy list, raffle logistics, business donations.</div>
+        <div class="action-meta"><span class="action-owner">Gerard</span><span class="action-due">Coming weeks</span></div>
       </div>
     </div>
 
@@ -663,7 +823,7 @@ function updateCountdown() {
   if (mkt) mkt.textContent = days;
   const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   const actionsDate = document.getElementById('actionsDate');
-  if (actionsDate) actionsDate.textContent = `As of ${dateStr} · ${days} days to event · Sourced from meeting minutes and Tasks Timeline`;
+  if (actionsDate) actionsDate.textContent = `As of ${dateStr} · ${days} days to event · Sourced from July 2 meeting minutes, wcfgolf@gmail.com, and WS Golf Tournament 2026 WhatsApp group (last checked July 10, 2026 · 4:36 pm)`;
 }
 updateCountdown();
 setInterval(updateCountdown, 60000); // refresh every minute
@@ -687,9 +847,9 @@ function renderChart() {
   sponsorChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Paid (Komandor)', 'Confirmed unpaid', 'Contacted pipeline', 'Uncaptured potential'],
+      labels: ['Paid ($35K)', 'In process ($7.5K+)', 'Contacted pipeline', 'Uncaptured potential'],
       datasets: [{
-        data: [25000, 16200, 3000, 32500],
+        data: [35000, 7500, 3000, 32500],
         backgroundColor: ['#38a169', '#d69e2e', '#dd6b20', '#63b3ed'],
         borderWidth: 3,
         borderColor: '#ffffff'
