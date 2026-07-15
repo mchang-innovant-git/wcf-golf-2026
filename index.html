@@ -281,7 +281,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
     </div>
   </div>
   <div class="header-meta">
-    <span><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> Last updated: July 15, 2026 · 5:50 PM EDT</span>
+    <span><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> Last updated: July 15, 2026 · 6:31 PM EDT</span>
   </div>
 </div>
 
@@ -344,15 +344,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <button class="drill-btn" onclick="downloadRegistrantsXLSX()" style="display:flex;align-items:center;gap:6px;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg> Download list (.xlsx)</button>
     </div>
     <table class="sp-table reg-table">
-      <thead><tr><th>#</th><th>Name</th><th>Group Name</th><th>Type</th><th>Email</th><th>Dietary Restrictions</th><th>Date Registered</th></tr></thead>
+      <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Dietary Restrictions</th><th>Date Registered</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td><strong>Gerald D'Souza</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>2</td><td><strong>Louis Marasco</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>3</td><td><strong>Gianna Marasco</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>4</td><td><strong>Gerson D'Souza</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com</td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>5</td><td><strong>Louis Williams</strong></td><td>Team Pgl</td><td>Golfer</td><td>chrishanthw@gmail.com</td><td>None</td><td>June 29, 2026</td></tr>
-        <tr><td>6</td><td><strong>Gerard Garcisto</strong></td><td>Team Pgl</td><td>Golfer</td><td>sgegarcisto@yahoo.com</td><td>None</td><td>July 2, 2026</td></tr>
-        <tr><td>7</td><td><strong>Luke Kyleman</strong></td><td>Playing With Robert Taylor</td><td>Golfer</td><td>lukekyleman@gmail.com</td><td>None</td><td>July 11, 2026</td></tr>
+        <tr class="reg-group-header" data-group="Marasco/D'Souza"><td colspan="5" style="padding:8px 12px;background:#f0fff4;border-left:4px solid #276749;font-size:13px;font-weight:600;color:#1a4731;">Marasco/D'Souza <span style="font-weight:400;color:#718096;font-size:12px;">· foursome · 4 golfers</span></td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Gerald D'Souza</strong></td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Louis Marasco</strong></td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Gianna Marasco</strong></td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Gerson D'Souza</strong></td><td>Golfer</td><td>gerson@gmail.com</td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-header" data-group="Team Pgl"><td colspan="5" style="padding:8px 12px;background:#ebf8ff;border-left:4px solid #2b6cb0;font-size:13px;font-weight:600;color:#1a365d;">Team Pgl <span style="font-weight:400;color:#718096;font-size:12px;">· 2 golfers</span></td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #bee3f8;"><strong>Louis Williams</strong></td><td>Golfer</td><td>chrishanthw@gmail.com</td><td>None</td><td>June 29, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #bee3f8;"><strong>Gerard Garcisto</strong></td><td>Golfer</td><td>sgegarcisto@yahoo.com</td><td>None</td><td>July 2, 2026</td></tr>
+        <tr class="reg-group-header" data-group="Playing With Robert Taylor"><td colspan="5" style="padding:8px 12px;background:#f7fafc;border-left:4px solid #a0aec0;font-size:13px;font-weight:600;color:#2d3748;">Playing With Robert Taylor <span style="font-weight:400;color:#718096;font-size:12px;">· 1 golfer</span></td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #e2e8f0;"><strong>Luke Kyleman</strong></td><td>Golfer</td><td>lukekyleman@gmail.com</td><td>None</td><td>July 11, 2026</td></tr>
       </tbody>
     </table>
     <div style="margin-top:8px;font-size:12px;color:#718096;">This table lists all confirmed attendees. Only rows marked "Golfer" count toward the 144-golfer cap above; any future "Dinner-only" guests will be listed here too but tracked and capped separately.</div>
@@ -769,15 +772,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <button class="drill-btn" onclick="downloadRegistrantsXLSX()" style="display:flex;align-items:center;gap:6px;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg> Download list (.xlsx)</button>
     </div>
     <table class="sp-table reg-table">
-      <thead><tr><th>#</th><th>Name</th><th>Group Name</th><th>Type</th><th>Email</th><th>Dietary Restrictions</th><th>Date Registered</th></tr></thead>
+      <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Dietary Restrictions</th><th>Date Registered</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td><strong>Gerald D'Souza</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>2</td><td><strong>Louis Marasco</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>3</td><td><strong>Gianna Marasco</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>4</td><td><strong>Gerson D'Souza</strong></td><td>Marasco/D'Souza</td><td>Golfer</td><td>gerson@gmail.com</td><td>None</td><td>May 7, 2026</td></tr>
-        <tr><td>5</td><td><strong>Louis Williams</strong></td><td>Team Pgl</td><td>Golfer</td><td>chrishanthw@gmail.com</td><td>None</td><td>June 29, 2026</td></tr>
-        <tr><td>6</td><td><strong>Gerard Garcisto</strong></td><td>Team Pgl</td><td>Golfer</td><td>sgegarcisto@yahoo.com</td><td>None</td><td>July 2, 2026</td></tr>
-        <tr><td>7</td><td><strong>Luke Kyleman</strong></td><td>Playing With Robert Taylor</td><td>Golfer</td><td>lukekyleman@gmail.com</td><td>None</td><td>July 11, 2026</td></tr>
+        <tr class="reg-group-header" data-group="Marasco/D'Souza"><td colspan="5" style="padding:8px 12px;background:#f0fff4;border-left:4px solid #276749;font-size:13px;font-weight:600;color:#1a4731;">Marasco/D'Souza <span style="font-weight:400;color:#718096;font-size:12px;">· foursome · 4 golfers</span></td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Gerald D'Souza</strong></td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Louis Marasco</strong></td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Gianna Marasco</strong></td><td>Golfer</td><td>gerson@gmail.com<div style="font-size:11px;color:#a0aec0;">(via Gerson D'Souza)</div></td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #c6f6d5;"><strong>Gerson D'Souza</strong></td><td>Golfer</td><td>gerson@gmail.com</td><td>None</td><td>May 7, 2026</td></tr>
+        <tr class="reg-group-header" data-group="Team Pgl"><td colspan="5" style="padding:8px 12px;background:#ebf8ff;border-left:4px solid #2b6cb0;font-size:13px;font-weight:600;color:#1a365d;">Team Pgl <span style="font-weight:400;color:#718096;font-size:12px;">· 2 golfers</span></td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #bee3f8;"><strong>Louis Williams</strong></td><td>Golfer</td><td>chrishanthw@gmail.com</td><td>None</td><td>June 29, 2026</td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #bee3f8;"><strong>Gerard Garcisto</strong></td><td>Golfer</td><td>sgegarcisto@yahoo.com</td><td>None</td><td>July 2, 2026</td></tr>
+        <tr class="reg-group-header" data-group="Playing With Robert Taylor"><td colspan="5" style="padding:8px 12px;background:#f7fafc;border-left:4px solid #a0aec0;font-size:13px;font-weight:600;color:#2d3748;">Playing With Robert Taylor <span style="font-weight:400;color:#718096;font-size:12px;">· 1 golfer</span></td></tr>
+        <tr class="reg-group-member"><td style="padding-left:28px;border-left:4px solid #e2e8f0;"><strong>Luke Kyleman</strong></td><td>Golfer</td><td>lukekyleman@gmail.com</td><td>None</td><td>July 11, 2026</td></tr>
       </tbody>
     </table>
     <div style="margin-top:8px;font-size:12px;color:#718096;">This table lists all confirmed attendees. Only rows marked "Golfer" count toward the 144-golfer cap above; any future "Dinner-only" guests will be listed here too but tracked and capped separately.</div>
@@ -1044,24 +1050,29 @@ function downloadRegistrantsXLSX() {
 
   const rows = table.querySelectorAll('tbody tr');
   const data = [];
+  let currentGroup = '';
+  let counter = 0;
   rows.forEach(row => {
+    if (row.classList.contains('reg-group-header')) {
+      currentGroup = row.dataset.group || '';
+      return;
+    }
     const cells = row.querySelectorAll('td');
-    if (cells.length < 7) return;
-    const num = cells[0].textContent.trim();
-    const nameCell = cells[1];
+    if (cells.length < 5) return;
+    counter++;
+    const nameCell = cells[0];
     const nameStrong = nameCell.querySelector('strong');
     const name = nameStrong ? nameStrong.textContent.trim() : nameCell.textContent.trim();
-    const groupName = cells[2].textContent.trim();
-    const type = cells[3].textContent.trim();
-    const emailCell = cells[4];
+    const type = cells[1].textContent.trim();
+    const emailCell = cells[2];
     const emailDiv = emailCell.querySelector('div');
     const email = (emailDiv ? emailCell.firstChild.textContent : emailCell.textContent).trim();
-    const dietary = cells[5].textContent.trim();
-    const dateRegistered = cells[6].textContent.trim();
+    const dietary = cells[3].textContent.trim();
+    const dateRegistered = cells[4].textContent.trim();
     data.push({
-      '#': num,
+      '#': counter,
       'Name': name,
-      'Group Name': groupName,
+      'Group Name': currentGroup,
       'Type': type,
       'Email': email,
       'Dietary Restrictions': dietary,
