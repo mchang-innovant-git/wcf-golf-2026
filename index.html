@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WCF Golf Tournament 2026 — Project Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root { color-scheme: light; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -326,6 +327,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
         <div class="reg-alert-box"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 3l1.7 4.6L17.3 9.3l-4.6 1.7L11 15.6 9.3 11 4.7 9.3 9.3 7.6z"/><path d="M18.5 14l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg> Lucia Shin group — potential foursome + hole sponsor<br><span style="font-size:12px;color:#718096;font-weight:400;">Lucia, Fr. Nahm, Stephen Shin + friend · $1,500 = foursome + hole · Louis responded Jul 7 with offer</span></div>
         <div style="font-size:13px;color:#2d3748;text-align:right;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg> Registration link: <strong>tinyurl.com/WellspringGOLF</strong></div>
+        <button class="drill-btn" onclick="downloadRegistrantsXLSX()" style="display:flex;align-items:center;gap:6px;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg> Download list (.xlsx)</button>
       </div>
     </div>
     <table class="sp-table reg-table">
@@ -747,6 +749,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
         <div class="reg-alert-box"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 3l1.7 4.6L17.3 9.3l-4.6 1.7L11 15.6 9.3 11 4.7 9.3 9.3 7.6z"/><path d="M18.5 14l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg> Lucia Shin group — potential foursome + hole sponsor<br><span style="font-size:12px;color:#718096;font-weight:400;">Lucia, Fr. Nahm, Stephen Shin + friend · $1,500 = foursome + hole · Louis responded Jul 7 with offer</span></div>
         <div style="font-size:13px;color:#2d3748;text-align:right;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg> Registration link: <strong>tinyurl.com/WellspringGOLF</strong></div>
+        <button class="drill-btn" onclick="downloadRegistrantsXLSX()" style="display:flex;align-items:center;gap:6px;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg> Download list (.xlsx)</button>
       </div>
     </div>
     <table class="sp-table reg-table">
@@ -1016,6 +1019,56 @@ function renderChart() {
 
 // sendPrompt helpers
 function sp(msg) { if (window.sendPrompt) window.sendPrompt(msg); }
+
+// Registrant/dining guest list export (.xlsx)
+function downloadRegistrantsXLSX() {
+  if (typeof XLSX === 'undefined') { alert('The Excel export library is still loading — please try again in a moment.'); return; }
+  const table = document.querySelector('#panel-actions .reg-table');
+  if (!table) { alert('Registration table not found.'); return; }
+
+  const rows = table.querySelectorAll('tbody tr');
+  const data = [];
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if (cells.length < 5) return;
+    const num = cells[0].textContent.trim();
+    const nameCell = cells[1];
+    const nameStrong = nameCell.querySelector('strong');
+    const name = nameStrong ? nameStrong.textContent.trim() : nameCell.textContent.trim();
+    const teamDiv = nameCell.querySelector('div');
+    const team = teamDiv ? teamDiv.textContent.replace('Foursome:', '').trim() : '';
+    const type = cells[2].textContent.trim();
+    const dateRegistered = cells[3].textContent.trim();
+    const confirmedVia = cells[4].textContent.trim();
+    data.push({
+      '#': num,
+      'Name': name,
+      'Type': type,
+      'Team / Foursome': team,
+      'Date Registered': dateRegistered,
+      'Confirmed Via': confirmedVia
+    });
+  });
+
+  const golferCount = data.filter(d => d.Type === 'Golfer').length;
+  const dinnerCount = data.filter(d => d.Type === 'Dinner-only').length;
+  const exportDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const wb = XLSX.utils.book_new();
+  const wsRegistrants = XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, wsRegistrants, 'Registrants');
+
+  const summaryRows = [
+    { Metric: 'Golfers Registered', Value: `${golferCount} of 144` },
+    { Metric: 'Dinner-Only Guests', Value: dinnerCount },
+    { Metric: 'Total Rows Exported', Value: data.length },
+    { Metric: 'Exported On', Value: exportDate }
+  ];
+  const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+  XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+  XLSX.writeFile(wb, `WCF_Golf_2026_Registrants_${exportDate.replace(/,/g, '').replace(/ /g, '_')}.xlsx`);
+}
 </script>
 </body>
 </html>
