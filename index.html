@@ -142,18 +142,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 
 /* ACTION ITEM STATUS */
 .action-item.done { border-left: 5px solid #38a169; opacity: 0.75; }
-.action-item.completed { border-left: 5px solid #2b6cb0; opacity: 0.8; }
 .action-item.cancelled { border-left: 5px solid #a0aec0; opacity: 0.55; }
 .action-item.inprog { border-left: 5px solid #d69e2e; }
 .action-item.new-item { border-left: 5px solid #805ad5; }
+.action-item.open { border-left: 5px solid #cbd5e0; }
 .action-item.done .action-title { text-decoration: line-through; color: #4a5568; }
 .action-item.cancelled .action-title { text-decoration: line-through; color: #718096; }
+.action-item.filtered-out { display: none; }
 .action-status { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-right: 6px; }
 .status-done { background: #c6f6d5; color: #22543d; }
-.status-completed { background: #bee3f8; color: #1a365d; }
 .status-cancelled { background: #e2e8f0; color: #4a5568; }
 .status-inprog { background: #fefcbf; color: #744210; }
 .status-new { background: #e9d8fd; color: #553c9a; }
+.status-open { background: #edf2f7; color: #4a5568; }
+
+/* ACTION ITEM FILTER BAR */
+.action-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 20px; border: 1.5px solid #cbd5e0; background: white; font-size: 13px; font-weight: 600; color: #4a5568; cursor: pointer; transition: all 0.15s; }
+.filter-btn:hover { border-color: #a0aec0; }
+.filter-btn.active { background: #276749; border-color: #276749; color: white; }
+.filter-btn .filter-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: rgba(0,0,0,0.08); font-size: 11px; font-weight: 700; }
+.filter-btn.active .filter-count { background: rgba(255,255,255,0.25); }
+.action-empty-state { text-align: center; padding: 32px 16px; color: #718096; font-size: 14px; background: white; border-radius: 10px; }
 
 /* RISK BANNER */
 .risk-banner { background: #fff5f5; border: 2px solid #fc8181; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 14px; align-items: center; font-size: 15px; color: #742a2a; line-height: 1.6; }
@@ -793,9 +803,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
   <div class="section-header"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 4.5a3 3 0 0 1 6 0"/><path d="M9 11.5h6M9 15.5h6"/></svg> Action Items</div>
   <div id="actionsDate" style="margin-bottom:16px;font-size:14px;color:#4a5568;font-weight:500;"></div>
 
-  <div class="action-list">
+  <div class="action-filter-bar" id="actionFilterBar">
+    <button class="filter-btn active" data-filter="all" onclick="filterActions('all')">All <span class="filter-count" id="count-all">0</span></button>
+    <button class="filter-btn" data-filter="new" onclick="filterActions('new')">New <span class="filter-count" id="count-new">0</span></button>
+    <button class="filter-btn" data-filter="inprog" onclick="filterActions('inprog')">In Progress <span class="filter-count" id="count-inprog">0</span></button>
+    <button class="filter-btn" data-filter="open" onclick="filterActions('open')">Not Started <span class="filter-count" id="count-open">0</span></button>
+    <button class="filter-btn" data-filter="done" onclick="filterActions('done')">Done <span class="filter-count" id="count-done">0</span></button>
+    <button class="filter-btn" data-filter="cancelled" onclick="filterActions('cancelled')">Cancelled <span class="filter-count" id="count-cancelled">0</span></button>
+  </div>
 
-    <div class="action-item done">
+  <div class="action-list" id="actionList">
+
+    <div class="action-item done" data-status="done">
       <div class="action-priority p-red">1</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Send updated email invite (remove Komandor logo)</div>
@@ -804,7 +823,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item cancelled">
+    <div class="action-item cancelled" data-status="cancelled">
       <div class="action-priority p-red">2</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-cancelled"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg> Cancelled</span>Assign Auction committee lead</div>
@@ -813,16 +832,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item completed">
+    <div class="action-item done" data-status="done">
       <div class="action-priority p-red">3</div>
       <div class="action-content">
-        <div class="action-title"><span class="action-status status-completed"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4 13l5 5L20 7"/></svg> Completed</span>Clarify and document Michael Currie's sponsorship deal</div>
+        <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Clarify and document Michael Currie's sponsorship deal</div>
         <div class="action-detail">Resolved per Jul 10 Sponsor Tracking update: Currie is the Lunch Sponsor ($10K), including hole-in-one, advertisements, and 1 complimentary foursome — paid in full. Dinner tier ($15K) is separate and still fully open.</div>
         <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">Completed</span></div>
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority p-red">4</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Launch cart sponsor outreach — $18,000 uncaptured</div>
@@ -831,7 +850,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority p-orange">5</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Gerson emails Anthony &amp; Miguel — supernumerary network blast</div>
@@ -840,16 +859,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item completed">
+    <div class="action-item done" data-status="done">
       <div class="action-priority p-orange">6</div>
       <div class="action-content">
-        <div class="action-title"><span class="action-status status-completed"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4 13l5 5L20 7"/></svg> Completed</span>Website and payment page — fully live</div>
+        <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Website and payment page — fully live</div>
         <div class="action-detail">Live. E-transfer, credit card, cheque — all working.</div>
         <div class="action-meta"><span class="action-owner">Louis → Adam</span><span class="action-due">Completed</span></div>
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority p-orange">7</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Convert Mike's 3 hole sponsor contacts to confirmed</div>
@@ -858,7 +877,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority p-orange">8</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Golf Course Coordination</div>
@@ -867,7 +886,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority p-yellow">9</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Print and distribute flyers</div>
@@ -876,25 +895,25 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item">
+    <div class="action-item open" data-status="open">
       <div class="action-priority p-orange">10</div>
       <div class="action-content">
-        <div class="action-title">Book photographer and videographer for event day</div>
+        <div class="action-title"><span class="action-status status-open"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/></svg> Not Started</span>Book photographer and videographer for event day</div>
         <div class="action-detail">Nothing booked yet. Good ones fill up — worth reaching out now for event-day coverage.</div>
         <div class="action-meta"><span class="action-owner">TBD — anyone with a contact?</span><span class="action-due">Soon</span></div>
       </div>
     </div>
 
-    <div class="action-item completed">
+    <div class="action-item done" data-status="done">
       <div class="action-priority p-yellow">11</div>
       <div class="action-content">
-        <div class="action-title"><span class="action-status status-completed"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4 13l5 5L20 7"/></svg> Completed</span>Gerson meets with Yanez and Lucian (Komandor)</div>
+        <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Gerson meets with Yanez and Lucian (Komandor)</div>
         <div class="action-detail">Done. Branding, foursomes, and dinner speaking slot covered.</div>
         <div class="action-meta"><span class="action-owner">Gerson</span><span class="action-due">Completed</span></div>
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Define registration tracking process (via AI agent)</div>
@@ -903,16 +922,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item completed">
+    <div class="action-item done" data-status="done">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
-        <div class="action-title"><span class="action-status status-completed"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4 13l5 5L20 7"/></svg> Completed</span>Emcee confirmed — Joseph Tan</div>
+        <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Emcee confirmed — Joseph Tan</div>
         <div class="action-detail">Gil confirmed (Jul 10): Joseph Tan emceeing dinner + awards. Comp: dinner only. Add to event schedule.</div>
         <div class="action-meta"><span class="action-owner">Gil Crooc</span><span class="action-due">Confirmed <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg></span></div>
       </div>
     </div>
 
-    <div class="action-item inprog">
+    <div class="action-item inprog" data-status="inprog">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-inprog"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> In Progress</span>Resolve open logistics questions (from Rob Taylor via Louis)</div>
@@ -921,7 +940,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item new-item">
+    <div class="action-item new-item" data-status="new">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-new"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 3l1.7 4.6L17.3 9.3l-4.6 1.7L11 15.6 9.3 11 4.7 9.3 9.3 7.6z"/><path d="M18.5 14l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg> New</span>Confirm Lucia Shin group — foursome + hole sponsorship</div>
@@ -930,7 +949,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item new-item">
+    <div class="action-item new-item" data-status="new">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-new"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 3l1.7 4.6L17.3 9.3l-4.6 1.7L11 15.6 9.3 11 4.7 9.3 9.3 7.6z"/><path d="M18.5 14l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg> New</span>50/50 raffle, door prizes &amp; swag bags — Gerard to coordinate</div>
@@ -939,7 +958,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item done">
+    <div class="action-item done" data-status="done">
       <div class="action-priority p-red">15</div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>New sponsor confirmed &amp; paid: Rudy Ocol ($8,000)</div>
@@ -948,7 +967,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item done">
+    <div class="action-item done" data-status="done">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>4th golfer registration found: Luke Kyleman (Jul 11)</div>
@@ -957,7 +976,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item done">
+    <div class="action-item done" data-status="done">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Louis Williams registration date confirmed as June 29</div>
@@ -966,7 +985,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>
     </div>
 
-    <div class="action-item done">
+    <div class="action-item done" data-status="done">
       <div class="action-priority" style="background:#805ad5;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 16.8 6.3 19.9l1.2-6.3L2.8 9.2l6.4-.8z"/></svg></div>
       <div class="action-content">
         <div class="action-title"><span class="action-status status-done"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg> Done</span>Gerson D'Souza's foursome confirmed — 3 more golfers added</div>
@@ -974,6 +993,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
         <div class="action-meta"><span class="action-owner">Maurice</span><span class="action-due">Completed</span></div>
       </div>
     </div>
+
+    <div class="action-empty-state" id="actionEmptyState" style="display:none;">No action items match this filter.</div>
 
   </div>
 </div>
@@ -1041,6 +1062,41 @@ function renderChart() {
 
 // sendPrompt helpers
 function sp(msg) { if (window.sendPrompt) window.sendPrompt(msg); }
+
+// Action item status filter
+let currentActionFilter = 'all';
+function getActionItems() {
+  const list = document.getElementById('actionList');
+  return list ? Array.from(list.querySelectorAll('.action-item[data-status]')) : [];
+}
+function updateActionFilterCounts() {
+  const items = getActionItems();
+  const counts = { all: items.length, new: 0, inprog: 0, open: 0, done: 0, cancelled: 0 };
+  items.forEach(item => {
+    const status = item.dataset.status;
+    if (counts.hasOwnProperty(status)) counts[status]++;
+  });
+  Object.keys(counts).forEach(key => {
+    const el = document.getElementById('count-' + key);
+    if (el) el.textContent = counts[key];
+  });
+}
+function filterActions(status) {
+  currentActionFilter = status;
+  const items = getActionItems();
+  let visibleCount = 0;
+  items.forEach(item => {
+    const matches = (status === 'all') || (item.dataset.status === status);
+    item.classList.toggle('filtered-out', !matches);
+    if (matches) visibleCount++;
+  });
+  document.querySelectorAll('#actionFilterBar .filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === status);
+  });
+  const emptyState = document.getElementById('actionEmptyState');
+  if (emptyState) emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+updateActionFilterCounts();
 
 // Registrant/dining guest list export (.xlsx)
 function downloadRegistrantsXLSX() {
