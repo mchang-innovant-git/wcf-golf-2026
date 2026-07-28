@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="gated">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,25 @@
 <style>
 :root { color-scheme: light; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* SITE-WIDE PASSWORD GATE — hides all content until unlocked (fails closed if JS is off) */
+#siteGate { display: none; }
+html.gated #siteGate { display: flex; }
+html.gated body > *:not(#siteGate) { display: none !important; }
+html.gated, html.gated body { overflow: hidden; height: 100%; }
+#siteGate { position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; padding: 20px;
+  background: linear-gradient(135deg, #1a4731 0%, #276749 100%); }
+.site-gate-card { background: white; border-radius: 14px; padding: 30px 32px; max-width: 380px; width: 100%;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.3); text-align: left; }
+.site-gate-title { font-size: 19px; font-weight: 700; color: #1a202c; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.site-gate-sub { font-size: 14px; color: #4a5568; line-height: 1.5; margin-bottom: 18px; }
+.site-gate-input { width: 100%; padding: 11px 14px; border: 1.5px solid #cbd5e0; border-radius: 8px; font-size: 15px;
+  font-family: inherit; margin-bottom: 10px; }
+.site-gate-input:focus { outline: none; border-color: #276749; }
+.site-gate-btn { width: 100%; padding: 11px 14px; background: #276749; color: white; border: none; border-radius: 8px;
+  font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.site-gate-btn:hover { background: #1a4731; }
+.site-gate-error { display: none; color: #c53030; font-size: 13.5px; margin-bottom: 10px; font-weight: 500; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #edf2f7; color: #1a202c; font-size: 16px; line-height: 1.6; }
 
 /* HEADER */
@@ -278,6 +297,59 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 </head>
 <body>
 
+<!-- SITE-WIDE PASSWORD GATE -->
+<div id="siteGate">
+  <div class="site-gate-card">
+    <div class="site-gate-title"><svg class="icn" style="width:20px;height:20px;" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> WCF Golf Tournament 2026</div>
+    <div class="site-gate-sub">This project dashboard is for the organizing committee. Please enter the committee password to continue.</div>
+    <input id="siteGateInput" class="site-gate-input" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault();submitSiteGate();}">
+    <div id="siteGateError" class="site-gate-error">Incorrect password — please try again.</div>
+    <button class="site-gate-btn" onclick="submitSiteGate()">Enter dashboard</button>
+  </div>
+</div>
+
+<script>
+// Site-wide access gate.
+// NOTE: this is a client-side deterrent only. The page is served as static HTML from a public
+// host, so the underlying markup is still retrievable by anyone who fetches the file directly.
+// The real privacy protection is that all personal data in this page is masked at author time.
+var SITE_GATE_HASH = '4eb8ac339a5672cb99851ae87cb49718c1580175367b5b4b108a8da02cd9c0ed';
+function unlockSite() {
+  document.documentElement.classList.remove('gated');
+}
+function submitSiteGate() {
+  var pw = document.getElementById('siteGateInput').value;
+  sha256Hex(pw).then(function (hex) {
+    if (hex === SITE_GATE_HASH) {
+      try { sessionStorage.setItem('wcfGolfUnlocked', '1'); } catch (e) {}
+      unlockSite();
+    } else {
+      document.getElementById('siteGateError').style.display = 'block';
+      document.getElementById('siteGateInput').value = '';
+      document.getElementById('siteGateInput').focus();
+    }
+  });
+}
+function sha256Hex(str) {
+  var bytes = new TextEncoder().encode(str);
+  return crypto.subtle.digest('SHA-256', bytes).then(function (buf) {
+    return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+      return b.toString(16).padStart(2, '0');
+    }).join('');
+  });
+}
+// Stay unlocked for the rest of the browser session so tab switching doesn't re-prompt.
+try {
+  if (sessionStorage.getItem('wcfGolfUnlocked') === '1') { unlockSite(); }
+} catch (e) {}
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.documentElement.classList.contains('gated')) {
+    var el = document.getElementById('siteGateInput');
+    if (el) el.focus();
+  }
+});
+</script>
+
 <!-- HEADER -->
 <div class="header">
   <div class="header-top">
@@ -350,7 +422,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>    </div>
     <div class="reg-toolbar">
       <div style="font-size:13px;color:#2d3748;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg> Registration link: <strong>tinyurl.com/WellspringGOLF</strong></div>
-      <button class="drill-btn" onclick="openRosterGate()" style="display:flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:inherit;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Committee roster (password required)</button>
+      <a class="drill-btn" href="https://cedarcrestcc.sharepoint.com/:x:/s/2026WGT/IQCwgCPGT5rYSZkaPP5lMA5JAdEhNdhwbJTPDc7ydYYoFEM?e=QJ5JQp" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;text-decoration:none;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 4h6v6"/><path d="M20 4L10 14"/><path d="M18 13v6a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H11"/></svg> Open registration list (Excel)</a>
     </div>
     <table class="sp-table reg-table">
       <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Dietary Restrictions</th><th>Date Registered</th></tr></thead>
@@ -813,7 +885,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       </div>    </div>
     <div class="reg-toolbar">
       <div style="font-size:13px;color:#2d3748;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg> Registration link: <strong>tinyurl.com/WellspringGOLF</strong></div>
-      <button class="drill-btn" onclick="openRosterGate()" style="display:flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:inherit;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Committee roster (password required)</button>
+      <a class="drill-btn" href="https://cedarcrestcc.sharepoint.com/:x:/s/2026WGT/IQCwgCPGT5rYSZkaPP5lMA5JAdEhNdhwbJTPDc7ydYYoFEM?e=QJ5JQp" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;text-decoration:none;"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 4h6v6"/><path d="M20 4L10 14"/><path d="M18 13v6a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H11"/></svg> Open registration list (Excel)</a>
     </div>
     <table class="sp-table reg-table">
       <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Dietary Restrictions</th><th>Date Registered</th></tr></thead>
@@ -1193,53 +1265,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 </div>
 
 </div><!-- end main -->
-
-<!-- ROSTER DOWNLOAD PASSWORD GATE -->
-<div id="rosterGateOverlay" style="display:none;position:fixed;inset:0;background:rgba(26,32,44,0.55);z-index:1000;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:white;border-radius:12px;padding:24px 28px;max-width:340px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.25);">
-    <div style="font-size:16px;font-weight:700;color:#1a202c;margin-bottom:6px;">Committee roster access</div>
-    <div style="font-size:13px;color:#4a5568;margin-bottom:14px;line-height:1.5;">This opens the full registration workbook, which includes contact details. Enter the committee password to continue.</div>
-    <input id="rosterGateInput" type="password" placeholder="Password" style="width:100%;padding:9px 12px;border:1.5px solid #cbd5e0;border-radius:6px;font-size:14px;margin-bottom:8px;box-sizing:border-box;">
-    <div id="rosterGateError" style="display:none;color:#c53030;font-size:13px;margin-bottom:8px;">Incorrect password — try again.</div>
-    <div style="display:flex;gap:8px;margin-top:6px;">
-      <button onclick="submitRosterGate()" class="drill-btn" style="flex:1;border:none;cursor:pointer;font-family:inherit;">Continue</button>
-      <button onclick="closeRosterGate()" style="flex:1;background:#e2e8f0;color:#2d3748;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// Roster download gate — a deterrent for casual visitors, not cryptographic security.
-// The underlying workbook remains governed by its own SharePoint sharing permissions.
-const ROSTER_HASH = 'be6d805aea623dab501717d5a55b5758f67552e6ad750a909c6ed771716f5fef';
-const ROSTER_URL_B64 = 'aHR0cHM6Ly9jZWRhcmNyZXN0Y2Muc2hhcmVwb2ludC5jb20vOng6L3MvMjAyNldHVC9JUUN3Z0NQR1Q1cllTWmthUFA1bE1BNUpBZEVoTmRod2JKVFBEYzd5ZFlZb0ZFTT9lPVFKNUpRcA==';
-function openRosterGate() {
-  const overlay = document.getElementById('rosterGateOverlay');
-  overlay.style.display = 'flex';
-  document.getElementById('rosterGateInput').value = '';
-  document.getElementById('rosterGateError').style.display = 'none';
-  document.getElementById('rosterGateInput').focus();
-}
-function closeRosterGate() {
-  document.getElementById('rosterGateOverlay').style.display = 'none';
-}
-async function submitRosterGate() {
-  const pw = document.getElementById('rosterGateInput').value;
-  const enc = new TextEncoder().encode(pw);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-  if (hex === ROSTER_HASH) {
-    closeRosterGate();
-    window.open(atob(ROSTER_URL_B64), '_blank', 'noopener');
-  } else {
-    document.getElementById('rosterGateError').style.display = 'block';
-  }
-}
-document.addEventListener('DOMContentLoaded', function() {
-  const input = document.getElementById('rosterGateInput');
-  if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitRosterGate(); });
-});
-</script>
 
 <script>
 // Countdown
